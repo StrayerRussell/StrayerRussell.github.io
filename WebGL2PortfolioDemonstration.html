@@ -1,0 +1,514 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  th {
+    padding-right: 1rem;
+  }
+  canvas {
+    width: 720px;
+    height: 480px;
+    background-color: rgb(98, 80, 186);
+    border: solid 2px rgb(255, 218, 126);
+  }
+  body {
+    background-color: rgb(98, 5, 186);
+    color: rgb(255, 218, 126);
+    font-family: system-ui;
+  }
+  button,input,textarea {
+    appearance: none;
+    width: auto;
+    height: auto;
+    color: rgb(255, 218, 126);
+    border-color: rgb(255, 218, 126);
+    background-color: rgb(98, 80, 186);
+    border-radius: 10px;
+    font-size: 20px;
+  }
+</style>
+</head>
+<body>
+  <h2>WebGL2 Screenshare 1BPP Dithering Demo </h2>
+  <canvas id="ConvertedCanvas" width="720" height="480" width="720px" height="480px"></canvas><br>
+  <details>
+    <summary>Dump Canvas Data</summary>
+    <details>
+      <summary>Raw Video</summary>
+      <video id="ScreenshareVideoStream" autoplay width="720px" height="480px"></video>
+      <canvas id="InitialCanvas" width="720px" height="480px" hidden></canvas><br>
+    </details>
+    <canvas id="CompressionCheckCanvas" width="720px" height="480px"></canvas><br>
+    <div id="error-box">
+      <span class="error-box-title">Error messages, if any, go in here.</span>
+    </div>
+    <textarea id="CSVImageData" disabled cols="70" rows="5" style='font-size: 18px; resize: none;'></textarea><br>
+    <table id="compressionButtonTable">
+      <tr>
+        <td><button id="DumpRawData" onclick="dumpRawData();" style='font-size: 18px;'>Dump Raw Data</button></td>
+        <td><button id="DumpZlibData" onclick="dumpZlibData();" style='font-size: 18px;'>Dump Zlib Data</button></td>
+      </tr>
+    </table>
+  </details>
+  <table id="screenshareButtons">
+    <tr>
+      <td><button id="shareButton" onclick="startCapture();" style='font-size: 18px;'>Begin Screen Capture</button></td>
+      <td><button id="stopShareButton" onclick="stopCapture();" style='font-size: 18px; display: none;'>End Screen Capture</button></td>
+    </tr>
+  </table>
+<!--Vertex Shader -->
+<script id="vertex-shader-2d" type="x-shader/x-vertex">#version 300 es
+  precision mediump float;
+
+  in vec2 a_position;
+  in vec2 a_texCoord;
+
+  out vec2 v_texCoord;
+
+  uniform vec2 u_resolution;
+
+  void main() {
+    // convert the rectangle from pixels to 0.0 to 1.0
+    vec2 zeroToOne = a_position / u_resolution;
+
+    // convert from 0->1 to 0->2
+    vec2 zeroToTwo = zeroToOne * 2.0;
+
+    // convert from 0->2 to -1->+1 (clipspace)
+    vec2 clipSpace = zeroToTwo - 1.0;
+
+    gl_Position = vec4(clipSpace * vec2(1, -1), 0, 1);
+
+    // pass the texCoord to the fragment shader
+    // The GPU will interpolate this value between points.
+    v_texCoord = a_texCoord;
+  }
+</script>
+<!-- Fragment Shader -->
+<script id="fragment-shader-2d" type="x-shader/x-fragment">#version 300 es
+  precision mediump float;
+  
+  in vec2 v_texCoord;
+  uniform sampler2D u_image;
+  uniform vec2 u_textureSize;
+  float u_saturationThreshold = 0.03; // Uniform for saturation threshold
+  float u_grayThreshold = 0.25; // Uniform for gray threshold
+  float edgeThreshold = 0.3;
+
+  float getBayerValue(int x, int y) {
+    int bayerMatrix[64] = int[64](
+      1, 49, 13, 61, 4, 52, 16, 64,
+      33, 17, 45, 29, 36, 20, 48, 32,
+      9, 57, 5, 53, 12, 60, 8, 56,
+      41, 25, 37, 21, 44, 28, 40, 24,
+      3, 51, 15, 63, 2, 50, 14, 62,
+      35, 19, 47, 31, 34, 18, 46, 30,
+      11, 59, 7, 55, 10, 58, 6, 54,
+      43, 27, 39, 23, 42, 26, 38, 22
+    );
+    return float(bayerMatrix[y * 8 + x]) / 64.0;
+  }
+
+  out vec4 outColor;
+
+  void main() {
+    vec2 onePixel = vec2(1.0, 1.0) / u_textureSize;
+    vec4 color = texture(u_image, v_texCoord);
+    float gray = dot(color.rgb, vec3(0.299, 0.587, 0.114));
+    
+    // Calculate saturation
+    float maxColor = max(max(color.r, color.g), color.b);
+    float minColor = min(min(color.r, color.g), color.b);
+    float saturation = maxColor - minColor;
+    
+    // Check saturation first
+    if (saturation < u_saturationThreshold) {
+      // Apply sharpening filter
+      vec4 north = texture(u_image, v_texCoord + vec2(0.0, onePixel.y));
+      vec4 south = texture(u_image, v_texCoord - vec2(0.0, onePixel.y));
+      vec4 east = texture(u_image, v_texCoord + vec2(onePixel.x, 0.0));
+      vec4 west = texture(u_image, v_texCoord - vec2(onePixel.x, 0.0));
+      vec4 center = texture(u_image, v_texCoord);
+
+      vec4 sharpenedColor = center * 5.0 - north - south - east - west;
+
+      // Apply basic thresholding
+      float finalColor = step(u_grayThreshold, dot(sharpenedColor.rgb, vec3(0.299, 0.587, 0.114)));
+      outColor = vec4(vec3(finalColor), 1.0);
+      return;
+    }
+    
+    // Sobel edge detection
+    vec4 north = texture(u_image, v_texCoord + vec2(0.0, onePixel.y));
+    vec4 south = texture(u_image, v_texCoord - vec2(0.0, onePixel.y));
+    vec4 east = texture(u_image, v_texCoord + vec2(onePixel.x, 0.0));
+    vec4 west = texture(u_image, v_texCoord - vec2(onePixel.x, 0.0));
+    vec4 northeast = texture(u_image, v_texCoord + vec2(onePixel.x, onePixel.y));
+    vec4 northwest = texture(u_image, v_texCoord + vec2(-onePixel.x, onePixel.y));
+    vec4 southeast = texture(u_image, v_texCoord + vec2(onePixel.x, -onePixel.y));
+    vec4 southwest = texture(u_image, v_texCoord + vec2(-onePixel.x, -onePixel.y));
+    
+    float gx = -1.0 * dot(northwest.rgb, vec3(0.299, 0.587, 0.114)) + 1.0 * dot(northeast.rgb, vec3(0.299, 0.587, 0.114)) +
+               -2.0 * dot(west.rgb, vec3(0.299, 0.587, 0.114)) + 2.0 * dot(east.rgb, vec3(0.299, 0.587, 0.114)) +
+               -1.0 * dot(southwest.rgb, vec3(0.299, 0.587, 0.114)) + 1.0 * dot(southeast.rgb, vec3(0.299, 0.587, 0.114));
+    
+    float gy = -1.0 * dot(northwest.rgb, vec3(0.299, 0.587, 0.114)) + 1.0 * dot(southwest.rgb, vec3(0.299, 0.587, 0.114)) +
+               -2.0 * dot(north.rgb, vec3(0.299, 0.587, 0.114)) + 2.0 * dot(south.rgb, vec3(0.299, 0.587, 0.114)) +
+               -1.0 * dot(northeast.rgb, vec3(0.299, 0.587, 0.114)) + 1.0 * dot(southeast.rgb, vec3(0.299, 0.587, 0.114));
+    
+    float edge = sqrt(gx * gx + gy * gy);
+    
+    // Get the position in the Bayer matrix
+    int x = int(mod(gl_FragCoord.x, 8.0));
+    int y = int(mod(gl_FragCoord.y, 8.0));
+    
+    // Adjust the threshold based on the Bayer matrix
+    float bayerThreshold = getBayerValue(x, y);
+    
+    // Apply the dithering effect only if the edge value is below the threshold
+    float dithered = step(bayerThreshold, gray);
+    
+    // Use the edge strength to decide whether to apply dithering or not
+    float finalColor = mix(dithered, gray, smoothstep(0.0, edgeThreshold, edge));
+    
+    // Output the final color as one bit black and white
+    outColor = vec4(vec3(finalColor > 0.5 ? 1.0 : 0.0), 1.0);
+  }
+</script>
+<script src="https://cdn.jsdelivr.net/npm/pako@1.0.11/dist/pako.min.js"></script>
+<script>
+
+function showError(errorText) {
+  const errorBoxDiv = document.getElementById("error-box");
+  const errorTextElement = document.createElement("p");
+  errorTextElement.innerText = errorText;
+  errorBoxDiv.appendChild(errorTextElement);
+  console.error(errorText);
+}
+
+const canvas = document.getElementById('ConvertedCanvas');
+if(!canvas) {
+  showError('Failed to retrieve the canvas element.');
+}
+
+let gl = canvas.getContext('webgl2', { preserveDrawingBuffer: true});
+if (!gl) {
+  showError('Failed to get the rendering context for WebGL2.');
+  gl = canvas.getContext('webgl', { preserveDrawingBuffer: true});
+}
+if (!gl) {
+  showError('Failed to get the rendering context for WebGL.');
+}
+
+let sharedVideoStream = document.getElementById("ScreenshareVideoStream");
+
+function webglInitialize() {
+
+  gl.clearColor(1, 0, 0, 1.0);
+  gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+
+  const triangleVerticies = {
+    position: [
+      0.0, 0.5,
+      -0.5, -0.5,
+      0.5, -0.5
+    ]};
+  const triangleVerticiesCpuBuffer = new Float32Array(triangleVerticies.position); 
+
+  const triangleGeoBuffer = gl.createBuffer();
+  gl.bindBuffer(gl.ARRAY_BUFFER, triangleGeoBuffer);
+  gl.bufferData(gl.ARRAY_BUFFER, triangleVerticiesCpuBuffer, gl.STATIC_DRAW);
+
+  // look up the script tag by id.
+  var VertexShaderScript = document.getElementById("vertex-shader-2d");
+
+  // error if cannot find the script tag containing the vertex shader information
+  if(!VertexShaderScript) {
+    showError('Failed to retrieve the vertex shader script element.');
+    return;
+  }
+
+  // extract the contents of the script tag.
+  var VertexShaderSource = VertexShaderScript.text;
+
+  // look up the script tag by id.
+  var FragmentShaderScript = document.getElementById("fragment-shader-2d");
+
+  // error if cannot find the script tag containing the vertex shader information
+  if(!FragmentShaderScript) {
+    showError('Failed to retrieve the vertex shader script element.');
+    return;
+  }
+
+  // extract the contents of the script tag.
+  var FragmentShaderSource = FragmentShaderScript.text;
+
+  const vertexShader = gl.createShader(gl.VERTEX_SHADER);
+  gl.shaderSource(vertexShader, VertexShaderSource);
+  gl.compileShader(vertexShader);
+  if(!gl.getShaderParameter(vertexShader, gl.COMPILE_STATUS)) {
+    const compileError = gl.getShaderInfoLog(vertexShader);
+    showError('Failed to compile the vertex shader: ' + compileError);
+    return;
+  }
+
+  const fragmentShader = gl.createShader(gl.FRAGMENT_SHADER);
+  gl.shaderSource(fragmentShader, FragmentShaderSource);
+  gl.compileShader(fragmentShader);
+  if(!gl.getShaderParameter(fragmentShader, gl.COMPILE_STATUS)) {
+    const compileError = gl.getShaderInfoLog(fragmentShader);
+    showError('Failed to compile the vertex shader: ' + compileError);
+    return;
+  }
+
+  const imageProcessingProgram = gl.createProgram();
+  gl.attachShader(imageProcessingProgram, vertexShader);
+  gl.attachShader(imageProcessingProgram, fragmentShader);
+  gl.linkProgram(imageProcessingProgram);
+  if(!gl.getProgramParameter(imageProcessingProgram, gl.LINK_STATUS)){
+    const linkError = gl.getProgramInfoLog(imageProcessingProgram);
+    showError('Failed to link the shader program: ' + linkError);
+    return;
+  }
+  // look up where the vertex data needs to go.
+  var positionLocation = gl.getAttribLocation(imageProcessingProgram, "a_position");
+  var texcoordLocation = gl.getAttribLocation(imageProcessingProgram, "a_texCoord");
+
+  // Create a buffer to put three 2d clip space points in
+  var positionBuffer = gl.createBuffer();
+
+  // Bind it to ARRAY_BUFFER (think of it as ARRAY_BUFFER = positionBuffer)
+  gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
+
+  // Set a rectangle the same size as the image.
+  setRectangle(gl, 0, 0, 720, 480);
+
+  // provide texture coordinates for the rectangle.
+  var texcoordBuffer = gl.createBuffer();
+  gl.bindBuffer(gl.ARRAY_BUFFER, texcoordBuffer);
+  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([
+      0.0,  0.0,
+      1.0,  0.0,
+      0.0,  1.0,
+      0.0,  1.0,
+      1.0,  0.0,
+      1.0,  1.0,
+  ]), gl.STATIC_DRAW);
+
+  // Create a texture.
+  var texture = gl.createTexture();
+  gl.bindTexture(gl.TEXTURE_2D, texture);
+
+  // Set the parameters so we can render any size image.
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+
+  // lookup uniforms
+  var resolutionLocation = gl.getUniformLocation(imageProcessingProgram, "u_resolution");
+  var textureSizeLocation = gl.getUniformLocation(imageProcessingProgram, "u_textureSize");
+
+  // Tell WebGL how to convert from clip space to pixels
+  gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
+
+  // Clear the canvas
+  gl.clearColor(0, 0, 0, 0);
+  gl.clear(gl.COLOR_BUFFER_BIT);
+
+  // Tell it to use our program (pair of shaders)
+  gl.useProgram(imageProcessingProgram);
+
+  // Turn on the position attribute
+  gl.enableVertexAttribArray(positionLocation);
+
+  // Bind the position buffer.
+  gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
+
+  // Tell the position attribute how to get data out of positionBuffer (ARRAY_BUFFER)
+  var size = 2;          // 2 components per iteration
+  var type = gl.FLOAT;   // the data is 32bit floats
+  var normalize = false; // don't normalize the data
+  var stride = 0;        // 0 = move forward size * sizeof(type) each iteration to get the next position
+  var offset = 0;        // start at the beginning of the buffer
+  gl.vertexAttribPointer(
+      positionLocation, size, type, normalize, stride, offset);
+
+  // Turn on the texcoord attribute
+  gl.enableVertexAttribArray(texcoordLocation);
+
+  // bind the texcoord buffer.
+  gl.bindBuffer(gl.ARRAY_BUFFER, texcoordBuffer);
+
+  // Tell the texcoord attribute how to get data out of texcoordBuffer (ARRAY_BUFFER)
+  var size = 2;          // 2 components per iteration
+  var type = gl.FLOAT;   // the data is 32bit floats
+  var normalize = false; // don't normalize the data
+  var stride = 0;        // 0 = move forward size * sizeof(type) each iteration to get the next position
+  var offset = 0;        // start at the beginning of the buffer
+  gl.vertexAttribPointer(
+      texcoordLocation, size, type, normalize, stride, offset);
+
+  // set the resolution
+  gl.uniform2f(resolutionLocation, gl.canvas.width, gl.canvas.height);
+
+  // set the size of the image
+  gl.uniform2f(textureSizeLocation, 720, 480);
+
+  // Draw the rectangle.
+  var primitiveType = gl.TRIANGLES;
+  var offset = 0;
+  var count = 6;
+  gl.drawArrays(primitiveType, offset, count);
+
+  gl.clearColor(0, 0, 0, 0);
+  gl.clear(gl.COLOR_BUFFER_BIT);
+}
+
+function webGlProcessImage() {
+// Upload the image into the texture.
+gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, sharedVideoStream);
+var error = gl.getError();
+if (error != gl.NO_ERROR) {
+    console.log('WebGL Error: ' + error);
+}
+// Draw the rectangle.
+gl.drawArrays(gl.TRIANGLES, 0, 6);
+}
+
+function setRectangle(gl, x, y, width, height) {
+var x1 = x;
+var x2 = x + width;
+var y1 = y;
+var y2 = y + height;
+gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([
+   x1, y1,
+   x2, y1,
+   x1, y2,
+   x1, y2,
+   x2, y1,
+   x2, y2,
+]), gl.STATIC_DRAW);
+}
+
+try {
+  webglInitialize();
+} catch (e) {
+  showError('Uncaught Javascript Exception: ' + e.message);
+}
+
+var video = document.querySelector('video');
+var desiredWidth = 720;
+var desiredHeight = 480;
+var shareButton = document.getElementById("shareButton");
+var stopShareButton = document.getElementById("stopShareButton");
+var captureAndSendButton = document.getElementById("captureAndSendButton");
+
+async function startCapture() {
+    video.srcObject = await navigator.mediaDevices.getDisplayMedia({ video: { cursor: "always" }, audio: false, surfaceSwitching: "include"});
+    video.addEventListener('play', function() {
+        drawVideoFrame();
+    });
+
+    shareButton.style.display = "none";
+    stopShareButton.style.display = "block";
+    captureAndSendButton.style.display = "block";
+}
+
+function stopCapture() {
+    const stream = video.srcObject;
+    const tracks = stream.getTracks();
+
+    tracks.forEach(function(track) {
+        track.stop();
+    });
+
+    video.srcObject = null;
+    shareButton.style.display = "block";
+    stopShareButton.style.display = "none";
+    captureAndSendButton.style.display = "none";
+}
+
+function dumpZlibData() {
+  // Start timing compression
+  console.time("Total Frame Processing Time");
+  console.time("Read Pixels Time");
+  var webglCanvas = document.getElementById('ConvertedCanvas');
+  var destinationCanvas = document.getElementById('CompressionCheckCanvas');
+  var ptx = destinationCanvas.getContext('2d');
+  ptx.drawImage(webglCanvas, 0, 0, desiredWidth, desiredHeight);
+  console.time("One Bit Conversion Time");
+  console.timeEnd("Read Pixels Time");
+  var pixels = ptx.getImageData(0, 0, desiredWidth, desiredHeight).data;
+  const bitData = new Uint8Array(desiredWidth * desiredHeight / 8).fill(0);
+  console.log("Bit data size: " + bitData.length);
+  for (let i = 0, bitIndex = 0; i < pixels.length; i += 4, bitIndex++) {
+      const msbGreen = (pixels[i + 1] & 0x80) >> 7;
+      bitData[Math.floor(bitIndex / 8)] |= msbGreen << (7 - (bitIndex % 8));
+  }
+  console.timeEnd("One Bit Conversion Time");
+
+  console.time("Compression Time");
+  const compressed = pako.deflate(bitData, { level: 1, raw: false });
+  console.timeEnd("Compression Time");
+
+  console.timeEnd("Total Frame Processing Time");
+
+  console.log("Compressed data size: " + compressed.length);
+
+  let hexString = '';
+  for (let i = 0; i < compressed.length; i++) {
+      hexString += '0x' + compressed[i].toString(16).padStart(2, '0');
+      if (i < compressed.length - 1) {
+          hexString += ',';
+      }
+      if ((i + 1) % 20 === 0) {
+          hexString += '\n';
+      }
+  }
+  document.getElementById('CSVImageData').value = hexString;
+}
+
+function dumpRawData() {
+  console.time("Total Frame Processing Time");
+  console.time("Read Pixels Time");
+  var webglCanvas = document.getElementById('ConvertedCanvas');
+  var destinationCanvas = document.getElementById('CompressionCheckCanvas');
+  var ptx = destinationCanvas.getContext('2d');
+  ptx.drawImage(webglCanvas, 0, 0, desiredWidth, desiredHeight);
+  console.timeEnd("Read Pixels Time");
+  console.time("One Bit Conversion Time");
+  var pixels = ptx.getImageData(0, 0, width, desiredHeight).data;
+  const bitData = new Uint8Array(desiredWidth * desiredHeight / 8).fill(0);
+
+  for (let i = 0, bitIndex = 0; i < pixels.length; i += 4, bitIndex++) {
+    const msbGreen = (pixels[i + 1] & 0x80) >> 7;
+    bitData[Math.floor(bitIndex / 8)] |= msbGreen << (7 - (bitIndex % 8));
+  }
+
+  console.timeEnd("One Bit Conversion Time");
+  console.timeEnd("Total Frame Processing Time");
+
+  let decimalString = '';
+  for (let i = 0; i < bitData.length; i++) {
+    decimalString += bitData[i].toString(10);
+    if (i < bitData.length - 1) {
+      decimalString += ',';
+    }
+  }
+  document.getElementById('CSVImageData').value = decimalString;
+}
+
+function drawVideoFrame() {
+    if (sharedVideoStream.paused || sharedVideoStream.ended) {
+    return;
+    }
+    webGlProcessImage();
+    requestAnimationFrame(drawVideoFrame);
+}
+
+</script>
+</body>
+</html>

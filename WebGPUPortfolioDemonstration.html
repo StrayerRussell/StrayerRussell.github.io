@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  th {
+    padding-right: 1rem;
+  }
+  canvas {
+    width: 720px;
+    height: 480px;
+    background-color: rgb(98, 80, 186);
+    border: solid 2px rgb(255, 218, 126);
+  }
+  body {
+    background-color: rgb(98, 5, 186);
+    color: rgb(255, 218, 126);
+    font-family: system-ui;
+  }
+  button,input,textarea {
+    appearance: none;
+    width: auto;
+    height: auto;
+    color: rgb(255, 218, 126);
+    border-color: rgb(255, 218, 126);
+    background-color: rgb(98, 80, 186);
+    border-radius: 10px;
+    font-size: 20px;
+  }
+  h5 {
+    color: red;
+  }
+</style>
+</head>
+<body>
+  <h2>WebGPU Screenshare 1BPP Dithering Demo </h2>
+  <h5>WebGPU support is currently experimental and is not supported in Firefox or Safari.</h5>
+  <canvas id="ConvertedCanvas" width="720" height="480"></canvas><br>
+  <details>
+    <summary>Dump Canvas Data</summary>
+    <details>
+      <summary>Raw Video</summary>
+      <video id="ScreenshareVideoStream" autoplay width="720px" height="480px"></video>
+      <canvas id="InitialCanvas" hidden></canvas><br>
+    </details>
+    <div id="error-box">
+      <span class="error-box-title">Error messages, if any, go in here.</span>
+    </div>
+    <textarea id="CSVImageData" disabled cols="70" rows="5" style='font-size: 18px; resize: none;'></textarea><br>
+    <table id="compressionButtonTable">
+      <tr>
+        <td><button id="DumpRawData" onclick="dumpRawData();" style='font-size: 18px;'>Dump Raw Data</button></td>
+        <td><button id="DumpZlibData" onclick="dumpZlibData(0);" style='font-size: 18px;'>Dump Zlib Data</button></td>
+        <td><button id="DumpChangeMap" onclick="dumpZlibData(1);" style='font-size: 18px;'>Dump Change Map</button></td>
+      </tr>
+    </table>
+  </details>
+  <table id="screenshareButtons">
+    <tr>
+      <td><button id="shareButton" onclick="startCapture();" style='font-size: 18px;'>Begin Screen Capture</button></td>
+      <td><button id="stopShareButton" onclick="stopCapture();" style='font-size: 18px; display: none;'>End Screen Capture</button></td>
+    </tr>
+  </table>
+<!-- Vertex Shader -->
+<script id="vertex-shader" type="x-shader/x-vertex">
+  struct VertexOutput {
+      @builtin(position) position : vec4<f32>,
+      @location(0) uv : vec2<f32>
+  };
+
+  @vertex
+  fn main(@builtin(vertex_index) vertexIndex : u32) -> VertexOutput {
+      var pos = array<vec2<f32>, 6>(
+          vec2<f32>(-1.0,  1.0),
+          vec2<f32>(-1.0, -1.0),
+          vec2<f32>( 1.0, -1.0),
+          vec2<f32>(-1.0,  1.0),
+          vec2<f32>( 1.0, -1.0),
+          vec2<f32>( 1.0,  1.0)
+      );
+
+      var uv = array<vec2<f32>, 6>(
+          vec2<f32>(0.0, 0.0),
+          vec2<f32>(0.0, 1.0),
+          vec2<f32>(1.0, 1.0),
+          vec2<f32>(0.0, 0.0),
+          vec2<f32>(1.0, 1.0),
+          vec2<f32>(1.0, 0.0)
+      );
+
+      var output : VertexOutput;
+      output.position = vec4<f32>(pos[vertexIndex], 0.0, 1.0);
+      output.uv = uv[vertexIndex];
+      return output;
+  }
+</script>
+<!-- Fragment Shader -->
+<script id="fragment-shader" type="x-shader/x-fragment">
+  @group(0) @binding(0) var u_image: texture_2d<f32>;
+  @group(0) @binding(1) var u_sampler: sampler;
+  
+  struct VertexOutput {
+      @builtin(position) position: vec4<f32>,
+      @location(0) texCoord: vec2<f32>,
+  };
+  
+  const textureSize: vec2<f32> = vec2<f32>(720.0, 480.0);
+  const saturationThreshold: f32 = 0.03;
+  const grayThreshold: f32 = 0.25;
+  const edgeThreshold: f32 = 0.2;
+  
+  fn getBayerValue(x: i32, y: i32) -> f32 {
+      let bayerMatrix: array<i32, 64> = array<i32, 64>(
+          1, 49, 13, 61, 4, 52, 16, 64,
+          33, 17, 45, 29, 36, 20, 48, 32,
+          9, 57, 5, 53, 12, 60, 8, 56,
+          41, 25, 37, 21, 44, 28, 40, 24,
+          3, 51, 15, 63, 2, 50, 14, 62,
+          35, 19, 47, 31, 34, 18, 46, 30,
+          11, 59, 7, 55, 10, 58, 6, 54,
+          43, 27, 39, 23, 42, 26, 38, 22
+      );
+      return f32(bayerMatrix[y * 8 + x]) / 64.0;
+  }
+  struct FragmentOutput {
+      @location(0) colorOutput0: vec4<f32>,
+      @location(1) colorOutput1: vec4<f32>,
+  };
+  
+  @fragment
+  fn main(input: VertexOutput) -> FragmentOutput {
+      // Sample the color from the texture
+      let color = textureSample(u_image, u_sampler, input.texCoord);
+      let gray = dot(color.rgb, vec3<f32>(0.299, 0.587, 0.114));
+      
+      // Calculate saturation
+      let maxColor = max(max(color.r, color.g), color.b);
+      let minColor = min(min(color.r, color.g), color.b);
+      let saturation = maxColor - minColor;
+  
+      // Apply sharpening to the original color (not grayscale)
+      let onePixel = vec2<f32>(1.0, 1.0) / textureSize;
+      let north = textureSample(u_image, u_sampler, input.texCoord + vec2<f32>(0.0, onePixel.y));
+      let south = textureSample(u_image, u_sampler, input.texCoord - vec2<f32>(0.0, onePixel.y));
+      let east = textureSample(u_image, u_sampler, input.texCoord + vec2<f32>(onePixel.x, 0.0));
+      let west = textureSample(u_image, u_sampler, input.texCoord - vec2<f32>(onePixel.x, 0.0));
+  
+      let sharpenedColor = color * 5.0 - north - south - east - west;
+      let sharpenedGray = dot(sharpenedColor.rgb, vec3<f32>(0.299, 0.587, 0.114));
+      let sharpenedThresholdedColor = step(grayThreshold, sharpenedGray);
+  
+      // Apply Sobel edge detection to the original color
+      let northeast = textureSample(u_image, u_sampler, input.texCoord + vec2<f32>(onePixel.x, onePixel.y));
+      let northwest = textureSample(u_image, u_sampler, input.texCoord - vec2<f32>(onePixel.x, onePixel.y));
+      let southeast = textureSample(u_image, u_sampler, input.texCoord + vec2<f32>(onePixel.x, -onePixel.y));
+      let southwest = textureSample(u_image, u_sampler, input.texCoord - vec2<f32>(onePixel.x, -onePixel.y));
+      
+      let gx = -1.0 * dot(northwest.rgb, vec3(0.299, 0.587, 0.114)) + 1.0 * dot(northeast.rgb, vec3(0.299, 0.587, 0.114)) +
+          -2.0 * dot(west.rgb, vec3(0.299, 0.587, 0.114)) + 2.0 * dot(east.rgb, vec3(0.299, 0.587, 0.114)) +
+          -1.0 * dot(southwest.rgb, vec3(0.299, 0.587, 0.114)) + 1.0 * dot(southeast.rgb, vec3(0.299, 0.587, 0.114));
+  
+      let gy = -1.0 * dot(northwest.rgb, vec3(0.299, 0.587, 0.114)) + 1.0 * dot(southwest.rgb, vec3(0.299, 0.587, 0.114)) +
+          -2.0 * dot(north.rgb, vec3(0.299, 0.587, 0.114)) + 2.0 * dot(south.rgb, vec3(0.299, 0.587, 0.114)) +
+          -1.0 * dot(northeast.rgb, vec3(0.299, 0.587, 0.114)) + 1.0 * dot(southeast.rgb, vec3(0.299, 0.587, 0.114));
+      
+      let edgeStrength = sqrt(gx * gx + gy * gy);
+  
+      // Apply dithering to the pre-converted grayscale value
+      let ditherThreshold = getBayerValue(
+          i32(floor(input.texCoord.x * textureSize.x) % 8),
+          i32(floor(input.texCoord.y * textureSize.y) % 8)
+      );
+      let ditheredColor = step(ditherThreshold, gray);
+  
+      // Final color computation based on saturation and edge detection
+      let finalColorSaturationLow = sharpenedThresholdedColor;
+      let finalColorSaturationHigh = mix(ditheredColor, gray, smoothstep(0.0, edgeThreshold, edgeStrength));
+  
+      var finalColor = select(finalColorSaturationLow, finalColorSaturationHigh, saturation > saturationThreshold);
+
+      // Ensure Bilevel output (either on or off no in between)
+      finalColor = step(0.5, finalColor);
+  
+      // Assign bitonal color to each color channel of output
+      let colorOutput = vec4<f32>(finalColor, finalColor, finalColor, 1.0);
+  
+      // Struct contianing final color twice for dua loutput, one for default RGBA8unorm output buffer for canvas overlay
+      // Other for R8unorm output buffer for compute shader
+      return  FragmentOutput(colorOutput, colorOutput);
+
+  }
+</script>
+<script id="compute-shader" type="x-shader/x-compute">
+  @group(0) @binding(0) var u_texture: texture_2d<f32>;
+  @group(0) @binding(1) var<storage, read_write> u_oneBitOutputBuffer: array<u32>;
+  @group(0) @binding(2) var<storage, read_write> u_oneBitChangeMapBuffer: array<u32>;
+
+  fn computeMSB(pixel_value: vec4<f32>) -> u32 {
+      // Check if the red component is greater than 0.0
+      return select(0u, 1u, pixel_value.r > 0.0);
+  }
+
+  fn reverseByteOrder(value: u32) -> u32 {
+      // Swap the bytes within the 32-bit integer
+      return ((value & 0x000000FFu) << 24) |
+             ((value & 0x0000FF00u) << 8) |
+             ((value & 0x00FF0000u) >> 8) |
+             ((value & 0xFF000000u) >> 24);
+  }
+
+  @compute @workgroup_size(1, 1, 1)
+  fn main(@builtin(global_invocation_id) global_id: vec3<u32>) {
+      let instance_index = global_id.x;
+      let start_offset = instance_index * 32u; // Process 32 pixels
+      let texture_size = textureDimensions(u_texture);
+
+      // Initialize the result integer
+      var result: u32 = 0u;
+      var changeMap: u32 = 0u;
+
+      // Loop through 32 pixels
+      for (var i: u32 = 0u; i < 32u; i = i + 1u) {
+          let tex_coord_x = (start_offset + i) % texture_size.x;
+          let tex_coord_y = (start_offset + i) / texture_size.x;
+
+          // Ensure coordinates are within bounds
+          if (tex_coord_x < texture_size.x && tex_coord_y < texture_size.y) {
+              let tex_coord = vec2<u32>(tex_coord_x, tex_coord_y);
+              let pixel_value = textureLoad(u_texture, tex_coord, 0);
+              let msb = computeMSB(pixel_value);
+              
+              // Shift the result to the left by one and add the MSB
+              result = result | (msb << (31u - i));
+          }
+      }
+
+      // Reverse the byte order of the result
+      result = reverseByteOrder(result);
+      changeMap = u_oneBitOutputBuffer[instance_index] ^ result;
+
+      u_oneBitChangeMapBuffer[instance_index] = changeMap;
+      u_oneBitOutputBuffer[instance_index] = result;
+  }
+</script>
+<script src="https://cdn.jsdelivr.net/npm/pako@1.0.11/dist/pako.min.js"></script>
+<script>
+
+let device, context, renderPipeline, videoTexture, videoElement, renderBindGroup, sampler
+let computePipeline, computeBindGroup, canvasWidth, bufferMultipleWidth, canvasHeight, oneBitOutputBuffer, oneBitOutputBufferSize, oneBitChangeMapBuffer, oneBitChangeMapBufferSize, eightBitOutputBuffer, eightBitOutputBufferSize;
+
+async function initWebGPU() {
+    if (!navigator.gpu) {
+        console.error("WebGPU is not supported in this browser.");
+        return;
+    }
+    const canvas = document.getElementById('ConvertedCanvas');
+    context = canvas.getContext('webgpu');
+
+    const adapter = await navigator.gpu.requestAdapter();
+    device = await adapter.requestDevice();
+
+    const format = 'rgba8unorm';
+    context.configure({
+        device: device,
+        format: format,
+        alphaMode: 'opaque'
+    });
+    const vertexShaderCode = document.getElementById('vertex-shader').textContent;
+    const fragmentShaderCode = document.getElementById('fragment-shader').textContent;
+    const computeShaderCode = document.getElementById('compute-shader').textContent;
+
+    const vertexShaderModule = device.createShaderModule({ code: vertexShaderCode });
+    const fragmentShaderModule = device.createShaderModule({ code: fragmentShaderCode });
+    const computeShaderModule = device.createShaderModule({ code: computeShaderCode });
+
+    const renderBindGroupLayout = device.createBindGroupLayout({
+        entries: [
+            {
+                binding: 0,
+                visibility: GPUShaderStage.FRAGMENT,
+                texture: {}
+            },
+            {
+                binding: 1,
+                visibility: GPUShaderStage.FRAGMENT,
+                sampler: {}
+            }
+        ]
+    });
+
+    const computeBindGroupLayout = device.createBindGroupLayout({
+        entries: [
+            { binding: 0, visibility: GPUShaderStage.COMPUTE, texture: {} },
+            { binding: 1, visibility: GPUShaderStage.COMPUTE, buffer: { type: 'storage' } },
+            { binding: 2, visibility: GPUShaderStage.COMPUTE, buffer: { type: 'storage' } }
+        ]
+    });
+
+    const renderPipelineLayout = device.createPipelineLayout({
+        bindGroupLayouts: [renderBindGroupLayout]
+    });
+
+    const computePipelineLayout = device.createPipelineLayout({
+        bindGroupLayouts: [computeBindGroupLayout]
+    });
+
+    renderPipeline = device.createRenderPipeline({
+        layout: renderPipelineLayout,
+        vertex: {
+            module: vertexShaderModule,
+            entryPoint: 'main',
+        },
+        fragment: {
+            module: fragmentShaderModule,
+            entryPoint: 'main',
+            targets: [
+                {
+                    format: 'rgba8unorm', // HTML5 Canvas Format RGBA8
+                },
+                {
+                    format: 'r8unorm', // Single channel format for compute shader processing
+                },
+            ],
+        },
+        primitive: {
+            topology: 'triangle-list',
+        },
+    });
+
+    computePipeline = device.createComputePipeline({
+        layout: computePipelineLayout,
+        compute: {
+            module: computeShaderModule,
+            entryPoint: 'main'
+        }
+    });
+
+    videoElement = document.getElementById('ScreenshareVideoStream');
+
+    videoTexture = device.createTexture({
+        size: [videoElement.videoWidth, videoElement.videoHeight, 1],
+        format: 'rgba8unorm',
+        usage: GPUTextureUsage.TEXTURE_BINDING | GPUTextureUsage.COPY_DST | GPUTextureUsage.RENDER_ATTACHMENT
+    });
+
+    canvasWidth = canvas.width;
+    canvasHeight = canvas.height;
+    bufferMultipleWidth = Math.ceil(canvasWidth / 256) * 256;
+    console.log('Buffer multiple width: ' + bufferMultipleWidth);
+
+    outputTexture = device.createTexture({
+        size: [canvasWidth, canvasHeight, 1],
+        format: 'r8unorm',
+        usage: GPUTextureUsage.RENDER_ATTACHMENT | GPUTextureUsage.TEXTURE_BINDING | GPUTextureUsage.COPY_SRC,
+    });
+
+    outputTextureView = outputTexture.createView();
+
+    sampler = device.createSampler({
+        magFilter: 'linear',
+        minFilter: 'linear'
+    });
+
+    renderBindGroup = device.createBindGroup({
+        layout: renderBindGroupLayout,
+        entries: [
+            { binding: 0, resource: videoTexture.createView() },
+            { binding: 1, resource: sampler }
+        ]
+    });
+
+    oneBitOutputBufferSize = canvasWidth * canvasHeight / 8;
+    oneBitOutputBuffer = device.createBuffer({
+        size: oneBitOutputBufferSize,
+        usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_SRC // STORAGE allows for read/write access
+    });
+
+    oneBitChangeMapBufferSize = canvasWidth * canvasHeight / 8;
+    oneBitChangeMapBuffer = device.createBuffer({
+        size: oneBitChangeMapBufferSize,
+        usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_SRC // STORAGE allows for read/write access
+    });
+
+    eightBitOutputBufferSize = bufferMultipleWidth * canvasHeight;
+    console.log('Eight bit output buffer size: ' + eightBitOutputBufferSize);
+    eightBitOutputBuffer = device.createBuffer({
+        size: eightBitOutputBufferSize,
+        usage: GPUBufferUsage.COPY_DST | GPUBufferUsage.MAP_READ // STORAGE allows for read/write access
+    });
+
+    computeBindGroup = device.createBindGroup({
+        layout: computeBindGroupLayout,
+        entries: [
+            { binding: 0, resource: outputTextureView }, // Use output texture from fragment shader as input texture for processing
+            { binding: 1, resource: { buffer: oneBitOutputBuffer } }, // Output for raw 1BPP data
+            { binding: 2, resource: { buffer: oneBitChangeMapBuffer } }, // Output for XOR 1BPP change map
+        ]
+    });
+
+    render();
+}
+
+async function runComputeShader(bufferSelect = 0) {
+
+    const workgroupCount = Math.ceil(eightBitOutputBufferSize / 32);
+    console.log('Workgroup count: ' + workgroupCount);
+
+    const commandEncoder = device.createCommandEncoder();
+
+    const computePass = commandEncoder.beginComputePass();
+    computePass.setPipeline(computePipeline);
+    computePass.setBindGroup(0, computeBindGroup);
+    computePass.dispatchWorkgroups(workgroupCount);
+    computePass.end();
+
+    const stagingBuffer = device.createBuffer({
+        size: oneBitOutputBufferSize,
+        usage: GPUBufferUsage.COPY_DST | GPUBufferUsage.MAP_READ
+    });
+
+    switch(bufferSelect) {
+        case 0:
+          // copy 1BPP output buffer to staging buffer
+          commandEncoder.copyBufferToBuffer(oneBitOutputBuffer, 0, stagingBuffer, 0, oneBitOutputBufferSize);
+          break;
+        case 1:
+          // Copy1BPP change map buffer to staging buffer
+          commandEncoder.copyBufferToBuffer(oneBitChangeMapBuffer, 0, stagingBuffer, 0, oneBitOutputBufferSize);
+          break;
+    }
+
+    device.queue.submit([commandEncoder.finish()]);
+    await stagingBuffer.mapAsync(GPUMapMode.READ);
+    const arrayBuffer = stagingBuffer.getMappedRange();
+    const outputArray = new Uint8Array(arrayBuffer);
+    const copiedArray = new Uint8Array(outputArray);
+    stagingBuffer.unmap();
+
+    return copiedArray;
+}
+
+function render() {
+    const videoElement = document.getElementById('ScreenshareVideoStream');
+    if (videoElement.readyState >= HTMLMediaElement.HAVE_CURRENT_DATA) {
+        device.queue.copyExternalImageToTexture(
+            { source: videoElement },
+            { texture: videoTexture },
+            [videoElement.videoWidth, videoElement.videoHeight, 1]
+        );
+
+        const commandEncoder = device.createCommandEncoder();
+        const textureView = context.getCurrentTexture().createView();
+        const outputTextureView = outputTexture.createView();
+        const renderPassDescriptor = {
+            colorAttachments: [
+                {
+                    view: textureView,
+                    loadOp: 'clear',
+                    clearValue: { r: 0, g: 0, b: 0, a: 1 },
+                    storeOp: 'store',
+                },
+                {
+                    view: outputTextureView,
+                    loadOp: 'clear',
+                    clearValue: { r: 0, g: 0, b: 0, a: 1 },
+                    storeOp: 'store',
+                },
+            ],
+        };
+        const passEncoder = commandEncoder.beginRenderPass(renderPassDescriptor);
+        passEncoder.setPipeline(renderPipeline);
+        passEncoder.setBindGroup(0, renderBindGroup);
+        passEncoder.draw(6, 1, 0, 0);
+        passEncoder.end();
+
+        const commandBuffer = commandEncoder.finish();
+        device.queue.submit([commandBuffer]);
+
+    }
+    requestAnimationFrame(render);
+}
+
+video = document.querySelector('video');
+var desiredWidth = 720;
+var desiredHeight = 480;
+var shareButton = document.getElementById("shareButton");
+var stopShareButton = document.getElementById("stopShareButton");
+var captureAndSendButton = document.getElementById("captureAndSendButton");
+var captureAndSendChangeMaskButton = document.getElementById("captureAndSendChangeMaskButton");
+
+async function startCapture() 
+{
+    video.srcObject = await navigator.mediaDevices.getDisplayMedia({ video: { cursor: "always" }, audio: false, surfaceSwitching: "include"});
+    video.addEventListener('play', function() {
+      initWebGPU();
+    });
+
+    shareButton.style.display = "none";
+    stopShareButton.style.display = "block";
+    captureAndSendButton.style.display = "block";
+    captureAndSendChangeMaskButton.style.display = "block";
+}
+
+function stopCapture() 
+{
+    const stream = video.srcObject;
+    const tracks = stream.getTracks();
+
+    tracks.forEach(function(track) {
+        track.stop();
+    });
+
+    video.srcObject = null;
+    shareButton.style.display = "block";
+    stopShareButton.style.display = "none";
+    captureAndSendButton.style.display = "none";
+    captureAndSendChangeMaskButton.style.display = "none";
+}
+
+async function dumpZlibData(bufferSelect = 0) {
+    try {
+        // Start timing compression
+        console.time("Total Frame Processing Time");
+        console.time("Read Pixels Time");
+
+        // Call runComputeShader and get the output array
+        const outputArray = await runComputeShader(bufferSelect);
+
+        console.timeEnd("Read Pixels Time");
+
+        console.log('Uncompressed data size: ' + outputArray.length);
+
+        // Compress the pixel data
+        console.time("Compression Time");
+        const compressed = pako.deflate(outputArray, { level: 1, raw: false });
+        console.timeEnd("Compression Time");
+
+        // End timing compression
+        console.timeEnd("Total Frame Processing Time");
+
+        console.log("Compressed data size: " + compressed.length);
+
+        // Convert compressed data to hex string and dump to textarea
+        let hexString = '';
+        for (let i = 0; i < compressed.length; i++) {
+            hexString += '0x' + compressed[i].toString(16).padStart(2, '0');
+            if (i < compressed.length - 1) {
+                hexString += ',';
+            }
+            if ((i + 1) % 20 === 0) {
+                hexString += '\n';
+            }
+        }
+
+        // Display the hex string in the textarea
+        const csvImageDataTextarea = document.getElementById('CSVImageData');
+        csvImageDataTextarea.value = hexString;
+    } catch (error) {
+        console.error('Error dumping zlib data:', error);
+    }
+}
+
+async function dumpRawData(bufferSelect = 0) {
+  try {
+        // Start timing compression
+        console.time("Total Frame Processing Time");
+        console.time("Read Pixels Time");
+
+        // Call runComputeShader and get the output array
+        const outputArray = await runComputeShader(bufferSelect);
+
+        console.timeEnd("Read Pixels Time");
+
+        console.log('Raw data size: ' + outputArray.length);
+
+        // Convert compressed data to hex string and dump to textarea
+        let hexString = '';
+        for (let i = 0; i < outputArray.length; i++) {
+            hexString += '0x' + outputArray[i].toString(16).padStart(2, '0');
+            if (i < outputArray.length - 1) {
+                hexString += ',';
+            }
+            if ((i + 1) % 20 === 0) {
+                hexString += '\n';
+            }
+        }
+
+        // Display the hex string in the textarea
+        const csvImageDataTextarea = document.getElementById('CSVImageData');
+        csvImageDataTextarea.value = hexString;
+    } catch (error) {
+        console.error('Error dumping raw data:', error);
+    }
+}
+</script>
+</body>
+</html>

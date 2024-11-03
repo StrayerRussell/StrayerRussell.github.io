@@ -1,0 +1,84 @@
+<!DOCTYPE HTML>
+<!--
+	Hyperspace by HTML5 UP
+	html5up.net | @ajlkn
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+-->
+<html>
+	<head>
+		<title>WebGL2 Real time Dithering Demo</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="stylesheet" href="assets/css/main.css" />
+		<noscript><link rel="stylesheet" href="assets/css/noscript.css" /></noscript>
+	</head>
+	<body class="is-preload">
+
+		<!-- Header -->
+			<header id="header">
+				<a href="index.html" class="title">Strayer Russell</a>
+				<nav>
+					<ul>
+						<li><a href="index.html">Home</a></li>
+						<li><a href="WebGL2DitheringArticle.html" class="active">WebGL2 Real time Dithering Demo</a></li>
+					</ul>
+				</nav>
+			</header>
+
+		<!-- Wrapper -->
+			<div id="wrapper">
+
+				<!-- Main -->
+					<section id="main" class="wrapper">
+						<div class="inner">
+							<h1 class="major">WebGL2 Realtime Dithering Demo</h1>
+							<h2><a href="WebGL2PortfolioDemonstration.html">Live Demo</a></h2>
+							<span class="image fit"><img src="images/WebGL2DitheringDemoScreenshot.jpg" alt="Image showing the Webgl 2 real time dithering demo including a canvas, and various UI elements such as buttons" /></span>
+							<p>This is a demo application I created which captures the users screen with the getDisplayMedia() API and utilizes WebGl 2 to apply processing such as edge detection, luminance threshholding, and saturation 
+								masking to this video stream in order to reduce the full color 24 bit per pixel video to one bit per pixel monochrome dithered image.
+							</p>
+							<p>This project was my first foray into the world of web based graphics API's and was primarily intended to farmiliarize myself with the API's and resources so that I would know the keywords and locations
+								to find help in the future. This project is the precursor to my <a href="WebGPUDitheringArticle.html">WebGPU Realtime Dithering Demo</a> project which I created after becoming frustrated with the 
+								limitations of WebGL2. I decided to continue with and finalize this project however as WebGL 2 is still incredibly relevant and more importantly widley supported by both browsers and the community.
+								I much prefer the more modern and flexible WebGPU API but due to it's experimental status it is not a safe assumption that it will "Just Work" on all devices and browsers.
+							</p>
+							<p>This demo leverages the vertex and fragment shader stages of the webgpu render pipeline. The vertex shader is used to render a space for the video texture to be projected upon and the fragment shader is used to 
+								apply the edge detection, luminance threshholding, and saturation masking to the video texture before crushing the color depth from the roughly 16 million colors of a 24 bit per pixel image to 2 colors of a 
+								bitonal image. The primary differentiator between this project and the WebGPU project is the lack of a compute shader stage in the pipeline. This is due to the lack of support for compute shaders in WebGL2
+								and nessecitates the reading back of the raw texture data to the CPU for further processing. This is a major bottleneck in the preformace of this project as WebGL2 is only garunteed to support the RGBA8 color
+								format requiring a full 32 bits to be read over the bus for each pixel in the image despite each pixel only needing 1 bit of information. The lack of support for non grapics computation also requires the 32 bit
+								to 1 bit compression to be done in Javascript on the CPU which is a much slower and less efficent process than the parallel processing of the GPU.
+							</p>
+							<p>Despite the shortcomings I feel that WebGL 2 has I still consider this project a success. I enjoyed developing with WebGPU much more but, deploying and testing my WebGPU application on other computers and systems was often a finnicky
+								and frustrating process, often requiring enabling experimental support or in some cases downloading an entirley seperate browser. To the credit of WebGL 2 it worked nearly effortlessly on all devices and browsers that I tested it on 
+								and I am confident that it will continue to do so for the forseeable future. I am also happy with the results of the project as it allowed me to experiment with different types of data processing and optimizations and I am proud of 
+								the final product. Especially because I now know where my prefrences lie and which tools I have at my disposal for future projects so that I may select the "right tool for the job." for applications which demand high reliability and 
+								portability over efficency and flexibility.
+							</p>
+
+							</p>
+						</div>
+					</section>
+
+			</div>
+
+		<!-- Footer -->
+			<footer id="footer" class="wrapper alt">
+				<div class="inner">
+					<ul class="menu">
+						<li>&copy; Untitled. All rights reserved.</li><li>Design: <a href="http://html5up.net">HTML5 UP</a></li>
+					</ul>
+				</div>
+			</footer>
+
+		<!-- Scripts -->
+			<script src="assets/js/jquery.min.js"></script>
+			<script src="assets/js/jquery.scrollex.min.js"></script>
+			<script src="assets/js/jquery.scrolly.min.js"></script>
+			<script src="assets/js/browser.min.js"></script>
+			<script src="assets/js/breakpoints.min.js"></script>
+			<script src="assets/js/util.js"></script>
+			<script src="assets/js/main.js"></script>
+
+	</body>
+</html>

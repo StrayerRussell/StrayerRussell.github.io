@@ -1,0 +1,726 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  body {
+    font-family: system-ui;
+    margin: 0;
+    padding: 0;
+    min-width: 0;
+    min-height: 0;
+    background-color: rgb(98, 80, 186);
+  }
+  #mainBodyDiv {
+    display: grid;
+    width: 100%;
+    height: 100vh;
+    grid-auto-columns: 7;
+    grid-auto-rows: 8;
+    grid-template-columns: repeat(4, 1fr);
+    grid-template-rows: repeat(7, 1fr);
+  }
+  #sidebarDiv, #sliderConfigurationDiv, #KeyboardConfigurationDiv, #keyboardSelectorDiv {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    width: 100%;
+    min-height: 100px;
+    max-height: 100%;
+    overflow-y: auto;
+    background-color: rgb(98, 5, 186);
+    color: rgb(255, 218, 126);
+    overflow: wrap;
+  }
+  #sidebarDiv {
+    grid-column: 1 / 2;
+    grid-row: 1 / 4;
+  }
+  #sliderConfigurationDiv {
+    flex-direction: row;
+    grid-column: 2 / 5;
+    grid-row: 1 / 4;
+    background-color: rgb(98, 80, 186);
+  }
+  #KeyboardConfigurationDiv {
+    grid-column: 2 / 5;
+    grid-row: 4 / 8;
+    background-color: rgb(98, 80, 186);
+  }
+  #keyboardSelectorDiv {
+    grid-column: 1 / 2;
+    grid-row: 4 / 8;
+  }
+  #settingsDialog {
+    background-color: rgb(98, 5, 186);
+    border-radius: 10px;
+    padding: 20px;
+  }
+  #KeyConfigFormInner {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+  }
+  #SoundboardModeSelector, #MacroModeSelector {
+    height: 100%;
+    border-radius: 30px 30px 0px 0px;
+  }
+  #KeyModeSelectorDiv {
+    width: 100%;
+    height: 10%;
+    display: flex;
+  }
+  #KeyFunctionSelectorDiv {
+    width: 100%;
+    height: auto;
+    min-height: 70%;
+    display: flex;
+    flex-direction: column;
+    background-color: rgb(98, 80, 186);
+    border-radius: 0px 0px 30px 30px;
+  }
+  #uploadConfigFileButton, #downloadConfigFile, #settingsButton, #InstructionsButton {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-grow: 1;
+    font-size: auto;
+  }
+  #uploadConfigFile {
+    display: none;
+  }
+  #Space {
+    width: 27.0625%;
+  }
+  #LeftCtrl, #RightCtrl, #LeftWin, #RightWin, #LeftAlt, #RightAlt, #Menu, #RightEnter, #BottomEnter {
+    width: 5.4125%;
+  }
+  #Tab {
+    width: 6.495%;
+  }
+  #CapsLock {
+    width: 7.5775%;
+  }
+  #LeftShift, #Enter {
+    width: 9.7425%;
+  }
+  #RightShift {
+    width: 11.9075%;
+  }
+  #Escape {
+    margin: 0% 4.33% 0% 0%;
+  }
+  #Backspace, #Numpad0 {
+    width: 8.66%;
+  }
+  #F4, #F8 {
+    margin: 0% 2.165% 0% 0%;
+  }
+  #Backspace, #RightShift, #RightCtrl, #Enter, #F12, #RightEnter, #BottomEnter {
+    margin: 0% 1% 0% 0%;
+  }
+  #Up {
+    margin: 0% 5.33% 0% 4.33%;
+  }
+  #PauseBreak, #PageUp, #PageDown, #Right {
+    margin: 0% 1% 0% 0%;
+  }
+  #NumpadPlusTop, #NumpadEnterTop {
+    border-radius: 10px 10px 0px 0px;
+    border-bottom: none;
+  }
+  #NumpadPlusBottom, #NumpadEnterBottom, #BottomEnter {
+    border-radius: 0px 0px 10px 10px;
+    border-top: none;
+    color: transparent;
+  }
+  #LeftEnter {
+    width: 1.05%;
+    border-radius: 10px 0px 0px 10px;
+    border-right: none;
+    color: transparent;
+  }
+  #RightEnter {
+    border-radius: 0px 10px 0px 0px;
+    border-left: none;
+    border-bottom: none;
+  }
+  #KeyboardNumber {
+    margin-bottom: 2.5%;
+  }
+  #saveButton, #clear {
+    background-color: rgb(98, 5, 186);
+  }
+  #KeyboardContainerDiv {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    width: 95%;
+    height: 95%;
+    margin: 2.5%;
+  }
+  .configElement, .exitButton {
+    appearance: none;
+    width: auto;
+    height: auto;
+    color: rgb(255, 218, 126);
+    border-color: rgb(255, 218, 126);
+    background-color: rgb(98, 80, 186);
+    border-radius: 10px;
+    font-size: 20px;
+  }
+  .configElement {
+    margin: 2.5% 10% 2.5% 10%;
+  }
+  .exitButton {
+    margin: 0%;
+    background-color: red;
+    overflow: wrap;
+    font-size: 30px;
+  }
+  .modalContent {
+    display: flex;
+    width: 90%;
+    height: auto;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 5%;
+    background-color: rgb(98, 80, 186);
+    border-radius: 30px;
+  }
+  .HrDiv {
+    width: 100%;
+    height: 15px;
+    background-color: rgb(98, 5, 186);
+    margin: 0px;
+  }
+  .KbSelectorButton {
+    appearance: none;
+    width: 100%;
+    height: 25%;
+    background-color: rgb(98, 5, 186);
+    color: rgb(255, 218, 126);
+    border: none;
+    border-radius: 30px 0px 0px 30px;
+    cursor: pointer;
+    font-size: 30px;
+    margin: 0px 0px 0px 0px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .KbSelectorButton:checked{
+    background-color: rgb(98, 80, 186);
+  }
+  .KbSelectorButton::before{
+    content: attr(value);
+    position: relative;
+  }
+  .sliderContainerDiv {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    width: 20%;
+    height: 100%;
+    align-self: center;
+  }
+  .sliderIconCanvas {
+    margin: 10px;
+    width: 128px;
+    height: 64px;
+    background-color: black;
+  }
+  .mute {
+    appearance: none;
+    width: 40px;
+    height: 40px;
+    background-color: white;
+    border-radius: 10px;
+  }
+  .mute:checked {
+    background-color: red;
+  }
+  .slider {
+    width: 100%;
+    background-color: black;
+    color: black;
+    accent-color: rgb(255, 218, 126);
+  }
+  .settingsElement {
+    width: 100%;
+    background-color: black;
+    color: black;
+    accent-color: rgb(255, 218, 126);
+  }
+  .KeyConfigButton {
+    appearance: none;
+    width: 4.33%;
+    height: 100%;
+    background-color: rgb(98, 5, 186);
+    color: rgb(255, 218, 126);
+    border-color:rgb(255, 218, 126);
+    border-radius: 10px 10px 10px 10px;
+    cursor: pointer;
+    font-size: 15px;
+    margin: 0px 0px 0px 0px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .KeyboardRow {
+    display: flex;
+    width: 100%;
+    height: 13%;
+  }
+  h1, h2 {
+    padding: 0;
+    margin: 0;
+    border: 0;
+    text-align: center;
+    display:inline-block;
+    color: rgb(255, 218, 126);
+  }
+  input[type=range][orient=vertical] {
+    writing-mode: vertical-lr;
+    direction: rtl;
+    appearance: slider-vertical;
+    width: 16px;
+    vertical-align: bottom;
+    margin: 0px 0px 0px 0px;
+    font-size: 10px;
+  }
+  dialog.configElement {
+    position: fixed;
+    z-index: 1000;
+    padding: 20px;
+    border-radius: 10px;
+    background-color: rgb(98, 5, 186);
+    width: 80%;
+    height: 80%;
+    max-height: 80%;
+    overflow-y: scroll;
+  }
+  input, textarea, select {
+    background-color: rgb(98, 5, 186);
+    border-color: rgb(255, 218, 126);
+    color: rgb(255, 218, 126);
+    border-radius: 10px;
+    margin: 10px;
+    font-size: 30px;
+  }
+  input[type=file] {
+    background-color: rgb(98, 5, 186);
+    border-color: rgb(255, 218, 126);
+    color: rgb(255, 218, 126);
+    border-radius: 10px;
+    margin: 10px;
+    font-size: 30px;
+  }
+</style>
+</head>
+<body>
+<div id="mainBodyDiv">
+  <div id="sidebarDiv">
+    <h1>Yapro Pad Configurator</h1><br>
+    <button id="uploadConfigFileButton" class="configElement"><label for="uploadConfigFile">Upload Existing Configuration File</label></button>
+    <input type="file" id="uploadConfigFile" value="Upload Existing Configuration File"><br>
+    <button id="downloadConfigFile" class="configElement">Download Configuration File</button>
+    <button id="settingsButton" class="configElement" onclick="document.getElementById('settingsDialog').show();">Settings</button>
+    <button id="InstructionsButton" class="configElement" onclick="document.getElementById('InstructionsDialog').show();">Help/Instructions</button>
+    <dialog id="settingsDialog" class="configElement">
+      <button onclick="document.getElementById('settingsDialog').close();" class="exitButton">x</button>
+      <div class="modalContent">
+        <h1>Settings</h1>
+        <label for="sliderCountElement">Number of Sliders</label>
+        <input id="sliderCountElement" type="number" class="SettingsElement" placeholder="6" min="0" max="10">
+        <label for="keyboardCountElement">Number of Keyboards</label>
+        <input id="keyboardCountElement" type="number" class="SettingsElement" placeholder="4" min="0" max="4">
+        <label for="oledType">OLED Type</label>
+        <select id="oledType" class="SettingsElement">
+          <option value="blue">Blue</option>
+          <option value="white">White</option>
+          <option value="blueYellow">Blue and Yellow</option>
+        </select>
+        <button id="saveButton" class="configElement" onClick="saveChanges()">Save Changes</button>
+      </div>
+    </dialog>
+    <dialog id="InstructionsDialog" class="configElement">
+      <button onclick="document.getElementById('InstructionsDialog').close();" class="exitButton">x</button>
+      <div class="modalContent">
+        <h1>Instructions</h1>
+        <p>
+        This is the Yapro Pad Configuration webpage where you can set the modes and functions of the various inputs such as sliders, and keyboard buttons.
+        </p>
+        <h2>Sidebar And Configuration Settings</h2>
+        <p>This is the Yapro Pad Configuration webpage where you can set the modes and functions of the various inputs such as sliders, and keyboard buttons.
+          Starting with the sidebar there is the option to upload an existing configuration file for modification and an option to download a config File
+          with the options as they have been configured on the webpage. The settings button will alow you to configure how many sliders and input Keyboards
+          your specific Yapro Pad has connected and to configure the colors supported by your slider displays. The sliders within the configurator should match 
+          the number of sliders that you have on your device and will display the Name of what the slider controlls such as "Discord" the icon of the slider
+          the current volume and whether or not the current slider is muted. You can change the Volume level and mute status by either manually ajusting the slider 
+          or mute button on the device or clicking its representation within the configurator. The configurator also allows you to change the name and icon of
+          a slider simply by clicking on either the name or the icon within the configurator.
+        </p>
+        <h2>Sliders</h2>
+        <p>
+          The sliders within the configurator should match the number of sliders that you have on your device and will display the Name of what the slider controlls 
+          such as "Discord" the icon of the slider the current volume and whether or not the current slider is muted. You can change the Volume level and mute status
+          by either manually ajusting the slider or mute button on the device or clicking its representation within the configurator. The configurator also allows you
+          to change the name and icon of a slider simply by clicking on either the name or the icon within the configurator.
+        </p>
+        <h2>Keyboards</h2>
+        <p>
+          The keyboard configuration section of the configurator allows you to select which keyboard you are configuring and then set the function of each key.
+          the sidebar displays a list of configured keyboards and hilights the currently selected keyboard. 
+        </p>
+        <h2>Technical Specifics</h2>
+
+        <h2>Links to External Resources</h2>
+
+      </div>
+    </dialog>
+  </div>
+  <div id="keyboardSelectorDiv">
+    <div class="HrDiv"></div>
+    <input type="radio" id="KeyboardOne" class="KbSelectorButton" name="keyboard" value="Keyboard One" onclick="populateKbDiv('Keyboard One')" checked><br>
+    <input type="radio" id="KeyboardTwo" class="KbSelectorButton" name="keyboard" value="Keyboard Two" onclick="populateKbDiv('Keyboard Two')"><br>
+    <input type="radio" id="KeyboardThree" class="KbSelectorButton" name="keyboard" value="Keyboard Three" onclick="populateKbDiv('Keyboard Three')"><br>
+    <input type="radio" id="KeyboardFour" class="KbSelectorButton" name="keyboard" value="Keyboard Four" onclick="populateKbDiv('Keyboard Four')">
+  </div>
+  <div id="sliderConfigurationDiv">
+    <div class="sliderContainerDiv">
+      <h2>Channel 1</h2>
+      <canvas id="sliderOneCanvas" class="sliderIconCanvas"></canvas>
+      <input type="range" min="0" max="255" value="50" class="slider" id="sliderOne" orient="vertical">
+      <input type="checkbox" id="sliderOneMute" class="mute">
+      <h2>Mute</h2>
+    </div>
+    <div class="sliderContainerDiv">
+      <h2>Channel 2</h2>
+      <canvas id="sliderTwoCanvas" class="sliderIconCanvas"></canvas>
+      <input type="range" min="0" max="255" value="50" class="slider" id="sliderTwo" orient="vertical">
+      <input type="checkbox" id="sliderTwoMute" class="mute">
+      <h2>Mute</h2>
+    </div>
+    <div class="sliderContainerDiv">
+      <h2>Channel 3</h2>
+      <canvas id="sliderThreeCanvas" class="sliderIconCanvas"></canvas>
+      <input type="range" min="0" max="255" value="50" class="slider" id="sliderThree" orient="vertical">
+      <input type="checkbox" id="sliderThreeMute" class="mute">
+      <h2>Mute</h2>
+    </div>
+    <div class="sliderContainerDiv">
+      <h2>Channel 4</h2>
+      <canvas id="sliderFourCanvas" class="sliderIconCanvas"></canvas>
+      <input type="range" min="0" max="255" value="50" class="slider" id="sliderFour" orient="vertical">
+      <input type="checkbox" id="sliderFourMute" class="mute">
+      <h2>Mute</h2>
+    </div>
+    <div class="sliderContainerDiv">
+      <h2>Channel 5</h2>
+      <canvas id="sliderFiveCanvas" class="sliderIconCanvas"></canvas>
+      <input type="range" min="0" max="255" value="50" class="slider" id="sliderFive" orient="vertical">
+      <input type="checkbox" id="sliderFiveMute" class="mute">
+      <h2>Mute</h2>
+    </div>
+    <div class="sliderContainerDiv">
+      <h2>Channel 6</h2>
+      <canvas id="sliderSixCanvas" class="sliderIconCanvas"></canvas>
+      <input type="range" min="0" max="255" value="50" class="slider" id="sliderSix" orient="vertical">
+      <input type="checkbox" id="sliderSixMute" class="mute">
+      <h2>Mute</h2>
+    </div>
+  </div>
+  <div id="KeyboardConfigurationDiv">
+    <div class="HrDiv"></div>
+    <div id="KeyboardContainerDiv">
+      <h1 id="KeyboardNumber">Keyboard One</h1><br>
+      <div id="KeyboardRowOne" class="KeyboardRow">
+        <button class="KeyConfigButton" id="Escape">Esc</button>
+        <button class="KeyConfigButton" id="F1">F1</button>
+        <button class="KeyConfigButton" id="F2">F2</button>
+        <button class="KeyConfigButton" id="F3">F3</button>
+        <button class="KeyConfigButton" id="F4">F4</button>
+        <button class="KeyConfigButton" id="F5">F5</button>
+        <button class="KeyConfigButton" id="F6">F6</button>
+        <button class="KeyConfigButton" id="F7">F7</button>
+        <button class="KeyConfigButton" id="F8">F8</button>
+        <button class="KeyConfigButton" id="F9">F9</button>
+        <button class="KeyConfigButton" id="F10">F10</button>
+        <button class="KeyConfigButton" id="F11">F11</button>
+        <button class="KeyConfigButton" id="F12">F12</button>
+        <button class="KeyConfigButton" id="Power">Power</button>
+        <button class="KeyConfigButton" id="Sleep">Sleep</button>
+        <button class="KeyConfigButton" id="WakeUp">Wake Up</button>
+      </div>
+      <div id="KeyboardRowTwo" class="KeyboardRow">
+        <button class="KeyConfigButton" id="Tilde">`</button>
+        <button class="KeyConfigButton" id="1">1</button>
+        <button class="KeyConfigButton" id="2">2</button>
+        <button class="KeyConfigButton" id="3">3</button>
+        <button class="KeyConfigButton" id="4">4</button>
+        <button class="KeyConfigButton" id="5">5</button>
+        <button class="KeyConfigButton" id="6">6</button>
+        <button class="KeyConfigButton" id="7">7</button>
+        <button class="KeyConfigButton" id="8">8</button>
+        <button class="KeyConfigButton" id="9">9</button>
+        <button class="KeyConfigButton" id="0">0</button>
+        <button class="KeyConfigButton" id="Dash">-</button>
+        <button class="KeyConfigButton" id="Equal">=</button>
+        <button class="KeyConfigButton" id="Backspace">Backspace</button>
+        <button class="KeyConfigButton" id="Printscreen">Print Screen</button>
+        <button class="KeyConfigButton" id="ScrollLock">Scroll Lock</button>
+        <button class="KeyConfigButton" id="PauseBreak">Pause Break</button>
+        <button class="KeyConfigButton" id="Numlock">Num Lock</button>
+        <button class="KeyConfigButton" id="NumpadSlash">/</button>
+        <button class="KeyConfigButton" id="NumpadAsterisk">*</button>
+        <button class="KeyConfigButton" id="NumpadDash">-</button>
+      </div>
+      <div id="KeyboardRowThree" class="KeyboardRow">
+        <button class="KeyConfigButton" id="Tab">Tab</button>
+        <button class="KeyConfigButton" id="Q">Q</button>
+        <button class="KeyConfigButton" id="W">W</button>
+        <button class="KeyConfigButton" id="E">E</button>
+        <button class="KeyConfigButton" id="R">R</button>
+        <button class="KeyConfigButton" id="T">T</button>
+        <button class="KeyConfigButton" id="Y">Y</button>
+        <button class="KeyConfigButton" id="U">U</button>
+        <button class="KeyConfigButton" id="I">I</button>
+        <button class="KeyConfigButton" id="O">O</button>
+        <button class="KeyConfigButton" id="P">P</button>
+        <button class="KeyConfigButton" id="LeftBracket">[</button>
+        <button class="KeyConfigButton" id="RightBracket">]</button>
+        <button class="KeyConfigButton" id="LeftEnter">Enter</button>
+        <button class="KeyConfigButton" id="RightEnter">Enter</button>
+        <button class="KeyConfigButton" id="Insert">Insert</button>
+        <button class="KeyConfigButton" id="Home">Home</button>
+        <button class="KeyConfigButton" id="PageUp">Page Up</button>
+        <button class="KeyConfigButton" id="Numpad7">7</button>
+        <button class="KeyConfigButton" id="Numpad8">8</button>
+        <button class="KeyConfigButton" id="Numpad9">9</button>
+        <button class="KeyConfigButton" id="NumpadPlusTop">+</button>
+      </div>
+      <div id="KeyboardRowFour" class="KeyboardRow">
+        <button class="KeyConfigButton" id="CapsLock">CapsLock</button>
+        <button class="KeyConfigButton" id="A">A</button>
+        <button class="KeyConfigButton" id="S">S</button>
+        <button class="KeyConfigButton" id="D">D</button>
+        <button class="KeyConfigButton" id="F">F</button>
+        <button class="KeyConfigButton" id="G">G</button>
+        <button class="KeyConfigButton" id="H">H</button>
+        <button class="KeyConfigButton" id="J">J</button>
+        <button class="KeyConfigButton" id="K">K</button>
+        <button class="KeyConfigButton" id="L">L</button>
+        <button class="KeyConfigButton" id="Semicolon">;</button>
+        <button class="KeyConfigButton" id="Apostrophe">'</button>
+        <button class="KeyConfigButton" id="Backslash">\</button>
+        <button class="KeyConfigButton" id="BottomEnter">Enter</button>
+        <button class="KeyConfigButton" id="Delete">Delete</button>
+        <button class="KeyConfigButton" id="End">End</button>
+        <button class="KeyConfigButton" id="PageDown">Page Down</button>
+        <button class="KeyConfigButton" id="Numpad4">4</button>
+        <button class="KeyConfigButton" id="Numpad5">5</button>
+        <button class="KeyConfigButton" id="Numpad6">6</button>
+        <button class="KeyConfigButton" id="NumpadPlusBottom">+</button>
+      </div>
+      <div id="KeyboardRowFive" class="KeyboardRow">
+        <button class="KeyConfigButton" id="LeftShift">Shift</button>
+        <button class="KeyConfigButton" id="Z">Z</button>
+        <button class="KeyConfigButton" id="X">X</button>
+        <button class="KeyConfigButton" id="C">C</button>
+        <button class="KeyConfigButton" id="V">V</button>
+        <button class="KeyConfigButton" id="B">B</button>
+        <button class="KeyConfigButton" id="N">N</button>
+        <button class="KeyConfigButton" id="M">M</button>
+        <button class="KeyConfigButton" id="Comma">,</button>
+        <button class="KeyConfigButton" id="Period">.</button>
+        <button class="KeyConfigButton" id="Slash">/</button>
+        <button class="KeyConfigButton" id="RightShift">Shift</button>
+        <button class="KeyConfigButton" id="Up">↑</button>
+        <button class="KeyConfigButton" id="Numpad1">1</button>
+        <button class="KeyConfigButton" id="Numpad2">2</button>
+        <button class="KeyConfigButton" id="Numpad3">3</button>
+        <button class="KeyConfigButton" id="NumpadEnterTop">Enter</button>
+      </div>
+      <div id="KeyboardRowSix" class="KeyboardRow">
+        <button class="KeyConfigButton" id="LeftCtrl">Ctrl</button>
+        <button class="KeyConfigButton" id="LeftWin">Win</button>
+        <button class="KeyConfigButton" id="LeftAlt">Alt</button>
+        <button class="KeyConfigButton" id="Space">Space</button>
+        <button class="KeyConfigButton" id="RightAlt">Alt</button>
+        <button class="KeyConfigButton" id="RightWin">Win</button>
+        <button class="KeyConfigButton" id="Menu">Menu</button>
+        <button class="KeyConfigButton" id="RightCtrl">Ctrl</button>
+        <button class="KeyConfigButton" id="Left">←</button>
+        <button class="KeyConfigButton" id="Down">↓</button>
+        <button class="KeyConfigButton" id="Right">→</button>
+        <button class="KeyConfigButton" id="Numpad0">0</button>
+        <button class="KeyConfigButton" id="NumpadPeriod">.</button>
+        <button class="KeyConfigButton" id="NumpadEnterBottom">Enter</button>
+      </div>
+    </div>
+    <dialog id="KeyConfigForm" class="configElement">
+      <button onclick="document.getElementById('KeyConfigForm').close();" class="exitButton">x</button>
+      <div id="KeyConfigFormInner">
+        <h1>Key Configuration</h1>
+        <div id="KeyModeSelectorDiv">
+          <input type="radio" id="SoundboardModeSelector" class="KbSelectorButton" name="ButtonMode" value="Macro" onClick="repopulateFormContent('radio')" checked>
+          <input type="radio" id="MacroModeSelector" class="KbSelectorButton" name="ButtonMode" value="Soundboard" onClick="repopulateFormContent('soundboard')">
+        </div>
+        <div id="KeyFunctionSelectorDiv">
+          <label for="macro-name">Macro Name:</label><br>
+          <input type="text" id="macro-name" name="macro-name" required><br>
+          <label for="keyCombinationTextarea">Key Combination:</label><br>
+          <textarea cols="30" rows="5" id="keyCombinationTextarea"></textarea><br>
+          <button type="button" id="clear" class="configElement" onclick="clearKeyCombination()">Clear</button>
+          <input type="hidden" name="button-id" class="configElement" value="${ConfigButtonId}">
+        </div>
+      </div>
+  </div>  
+</div>
+<script>
+  function saveChanges() {
+    const sliderCount = document.getElementById('sliderCountElement').value;
+    const keyboardCount = document.getElementById('keyboardCountElement').value;
+    const oledType = document.getElementById('oledType').value;
+    console.log(`Slider count: ${sliderCount}`);
+    console.log(`Keyboard count: ${keyboardCount}`);
+    console.log(`OLED type: ${oledType}`);
+    document.getElementById('settingsDialog').close();
+  }
+
+  function populateKbDiv(KbNumber) {
+    document.getElementById('KeyboardNumber').innerText = `${KbNumber}`;
+  }
+
+  const buttons = document.querySelectorAll('.KeyConfigButton');
+  const form = document.getElementById('KeyConfigFormInner');
+  buttons.forEach(button => {
+  button.addEventListener('click', () => {
+    document.getElementById('KeyConfigForm').showModal();
+  });
+});
+
+function repopulateFormContent (mode) {
+  console.log('repopulateFormContent called'); // debug statement
+ switch(mode) {
+  case 'radio':
+    document.getElementById('KeyFunctionSelectorDiv').innerHTML = `
+      <label for="macro-name">Macro Name:</label><br>
+      <input type="text" id="macro-name" name="macro-name" required><br>
+      <label for="key-combination">Key Combination:</label><br>
+      <textarea cols="30" rows="5" id="keyCombinationTextarea"></textarea><br>
+      <button type="button" id="clear" class="configElement" onclick="clearKeyCombination()">Clear</button>
+    `;
+    break;
+  case 'soundboard':
+    document.getElementById('KeyFunctionSelectorDiv').innerHTML = `
+      <label for="sound">Sound:</label>
+      <input type="file" accept=".wav" id="sound" name="sound" required>
+    `;
+    break;
+ }
+}
+
+function clearKeyCombination() {
+  document.getElementById('keyCombinationTextarea').value = '';
+}
+
+function regenerateFormContent(ConfigButtonId) {
+  const formContentDiv = document.getElementById('form-content');
+  formContentDiv.innerHTML = '';
+  const mode = document.querySelector('input[name="ButtonMode"]:checked').value;
+  let formContent;
+
+  formContentDiv.innerHTML = formContent;
+
+  // Add event listener after HTML has been updated
+  const clearButton = document.getElementById('clear');
+  const keyCombinationTextarea = document.getElementById('key-combination');
+  if (clearButton) {
+    clearButton.addEventListener('click', function(e) {
+      keyCombinationTextarea.value = ''; // clear the textarea
+    });
+    keyCombinationTextarea.readOnly = true; // make the textarea read-only
+  }
+  if (mode === 'Soundboard') {
+    document.getElementById('sound').addEventListener('change', function(e) {
+      const file = this.files[0];
+      const maxSize = 1024 * 1024 * 3; // 3MB max of 428 keys so absolute maximum of 1.284GB of sound effects
+      if (file.size > maxSize){
+        alert("File is too large ! Please select a file less than 3MB in size.");
+        this.value = "";
+      }
+    });
+  }
+}
+
+let keys = new Set();
+let releasedKeys = new Set();
+document.addEventListener('keydown', function(e) {
+  if (document.activeElement === keyCombinationTextarea) {
+    e.preventDefault(); // prevent the default behavior of keys
+    if (releasedKeys.has(e.code)) {
+      releasedKeys.clear(); // clear the set of released keys if the key is in the set
+    }
+    if (!keys.has(e.code)) {
+      if (keys.size > 0) {
+        keyCombinationTextarea.value += ' + ';
+      }
+      keys.add(e.code);
+      keyCombinationTextarea.value += e.code;
+    }
+  }
+});
+
+document.addEventListener('keyup', function(e) {
+  if (document.activeElement === keyCombinationTextarea) {
+    releasedKeys.add(e.code);
+    if (keys.size === releasedKeys.size && [...keys].every(key => releasedKeys.has(key))) {
+      keyCombinationTextarea.value += '\n'; // add a new line to the textarea
+      keys.clear(); // clear the set of pressed keys
+      releasedKeys.clear(); // clear the set of released keys
+      keyCombinationTextarea.scrollTop = keyCombinationTextarea.scrollHeight; // scroll down
+    }
+  }
+});
+
+function selectKeyboard(keyboardId) {
+    // Reset all buttons
+    const buttons = document.querySelectorAll('.KbSelectorButton');
+    buttons.forEach(button => {
+      button.classList.remove('active');
+    });
+
+    // Set the clicked button as active
+    const selectedButton = document.getElementById(keyboardId);
+    selectedButton.classList.add('active');
+
+    // Change the content of KeyboardContainerDiv based on the selected button
+    const container = document.getElementById('KeyboardContainerDiv');
+    switch (keyboardId) {
+      case 'KeyboardOne':
+        container.innerHTML = '<p>Configuration for Keyboard One</p>';
+        break;
+      case 'KeyboardTwo':
+        container.innerHTML = '<p>Configuration for Keyboard Two</p>';
+        break;
+      case 'KeyboardThree':
+        container.innerHTML = '<p>Configuration for Keyboard Three</p>';
+        break;
+      case 'KeyboardFour':
+        container.innerHTML = '<p>Configuration for Keyboard Four</p>';
+        break;
+      default:
+        container.innerHTML = '';
+    }
+}
+</script>
+</body>
+</html>
