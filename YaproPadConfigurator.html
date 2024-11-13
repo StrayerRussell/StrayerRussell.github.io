@@ -601,7 +601,7 @@
   <div class="HrDiv"></div>
   <div id="menuBarDiv">
     <!--mic, levels, sliders, keyboard, routing, lighting, settings-->
-    <input type="radio" id="micConfig" class="vertTab" name="menu" value="Mic" onclick="showDivById('floatingMicDiv', 'floatingDiv')">
+    <input type="radio" id="micConfig" class="vertTab" name="menu" value="Mic" onclick="showDivById('floatingMicDiv', 'floatingDiv')" checked>
     <input type="radio" id="levelsConfig" class="vertTab" name="menu" value="Levels" onclick="showDivById('floatingLevelsDiv', 'floatingDiv')">
     <input type="radio" id="slidersConfig" class="vertTab" name="menu" value="Sliders" onclick="showDivById('floatingSlidersDiv', 'floatingDiv')">
     <input type="radio" id="keyboardConfig" class="vertTab" name="menu" value="Keyboard" onclick="showDivById('floatingKeyboardDiv', 'floatingDiv')">
@@ -611,7 +611,7 @@
   </div>
   <div id="bottomSectionDiv">
     <div id="bottomIslandDiv">
-      <div id="floatingMicDiv" class="floatingDiv">
+      <div id="floatingMicDiv" class="floatingDiv" style="display:flex;">
         <div id="wideMicContainer" class="rowDirection">
           <div id="micProfilesDiv" class="columnDirectionBorder expandingHoriDiv">
             <h2>Mic Profiles</h2>
