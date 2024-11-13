@@ -1,0 +1,1454 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  body {
+    font-family: system-ui;
+    margin: 0;
+    padding: 0;
+    min-width: 0;
+    min-height: 0;
+    color: rgb(255, 218, 126);
+    background-color: rgb(98, 80, 186);
+    height: 100vh;
+  }
+  #mainBodyDiv {
+    display: flex;
+    width: 100%;
+    height: 100%;
+    flex-direction: column;
+  }
+  #topSectionDiv, #bottomSectionDiv {
+    display: flex;
+    flex-direction: row;
+  }
+  #topSectionDiv {
+    background-color: rgb(98, 5, 186);
+  }
+  #bottomSectionDiv {
+    border: 2px solid rgb(255, 218, 126);
+    border-top: none;
+    flex-grow: 1;
+  }
+  #menuBarDiv {
+    display: flex;
+    height: 5%;
+    flex-direction: row;
+    justify-content: center;
+    background-Color: rgb(98, 5, 186);
+  }
+  #bottomIslandDiv {
+    display: flex;
+    flex-direction: column;
+    min-width: 95%;
+    width: 95%;
+    max-width: 95%;
+    min-height: 90%;
+    margin: 2.5%;
+    background-color: rgb(98, 5, 186);
+    border: 2px solid rgb(255, 218, 126);
+    border-radius: 30px;
+  }
+  #sidebarDiv, #sliderConfigurationDiv, #KeyboardConfigurationDiv, #keyboardSelectorDiv {
+    display: flex;
+    flex-grow: 1;
+    flex-direction: column;
+    overflow-y: auto;
+    background-color: rgb(98, 5, 186);
+    color: rgb(255, 218, 126);
+    overflow: wrap;
+  }
+  #sliderConfigurationDiv {
+    flex-direction: row;
+    background-color: rgb(98, 80, 186);
+    border-radius: 0px 0px 0px 30px;
+    border-bottom: solid 2px rgb(255, 218, 126);
+    border-left: solid 2px rgb(255, 218, 126);
+
+  }
+  #KeyboardConfigurationDiv  {
+    width: 100%;
+    background-color: rgb(98, 80, 186);
+    border-radius: 0px 30px 30px 0px;
+    border: solid 2px rgb(255, 218, 126);
+    border-left: none;
+  }
+  #settingsDialog {
+    background-color: rgb(98, 5, 186);
+    border-radius: 30px;
+    padding: 20px;
+  }
+  #KeyConfigFormInner {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+  }
+  #KeyModeSelectorDiv {
+    width: 100%;
+    height: 10%;
+    display: flex;
+  }
+  #KeyFunctionSelectorDiv {
+    width: 100%;
+    height: auto;
+    min-height: 70%;
+    display: flex;
+    flex-direction: column;
+    background-color: rgb(98, 80, 186);
+    border-radius: 0px 0px 30px 30px;
+  }
+  #uploadConfigFileButton, #downloadConfigFile, #settingsButton, #InstructionsButton {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-grow: 1;
+    font-size: auto;
+  }
+  #uploadConfigFile {
+    display: none;
+  }
+  #Space {
+    width: 27.0625%;
+  }
+  #LeftCtrl, #RightCtrl, #LeftWin, #RightWin, #LeftAlt, #RightAlt, #Menu, #RightEnter, #BottomEnter {
+    width: 5.4125%;
+  }
+  #Tab {
+    width: 6.495%;
+  }
+  #CapsLock {
+    width: 7.5775%;
+  }
+  #LeftShift, #Enter {
+    width: 9.7425%;
+  }
+  #RightShift {
+    width: 11.9075%;
+  }
+  #Escape {
+    margin: 0% 4.33% 0% 0%;
+  }
+  #Backspace, #Numpad0 {
+    width: 8.66%;
+  }
+  #F4, #F8 {
+    margin: 0% 2.165% 0% 0%;
+  }
+  #Backspace, #RightShift, #RightCtrl, #Enter, #F12, #RightEnter, #BottomEnter {
+    margin: 0% 1% 0% 0%;
+  }
+  #Up {
+    margin: 0% 5.33% 0% 4.33%;
+  }
+  #PauseBreak, #PageUp, #PageDown, #Right {
+    margin: 0% 1% 0% 0%;
+  }
+  #NumpadPlusTop, #NumpadEnterTop {
+    border-radius: 10px 10px 0px 0px;
+    border-bottom: none;
+  }
+  #NumpadPlusBottom, #NumpadEnterBottom, #BottomEnter {
+    border-radius: 0px 0px 10px 10px;
+    border-top: none;
+    color: transparent;
+  }
+  #LeftEnter {
+    width: 1.05%;
+    border-radius: 10px 0px 0px 10px;
+    border-right: none;
+    color: transparent;
+  }
+  #RightEnter {
+    border-radius: 0px 10px 0px 0px;
+    border-left: none;
+    border-bottom: none;
+  }
+  #KeyboardNumber {
+    margin-bottom: 2.5%;
+  }
+  #KeyboardContainerDiv {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    width: 95%;
+    height: 95%;
+    margin: 2.5%;
+  }
+  #outputs {
+    writing-mode: vertical-rl;
+    color:rgb(255, 218, 126);
+    transform: rotate(180deg);
+    margin: 0px 20px 0px 0px;
+  }
+  #inputsLevelsDiv {
+    flex-grow: 3;
+  }
+  #wideMicContainer {
+    display: flex;
+    width: min-content;
+    justify-content: flex-start;
+  }
+  .config, .configDark, .exitButton {
+    appearance: none;
+    width: auto;
+    height: auto;
+    margin: 2.5% 10% 2.5% 10%;
+    color: rgb(255, 218, 126);
+    border-color: rgb(255, 218, 126);
+    background-color: rgb(98, 80, 186);
+    border-radius: 10px;
+    font-size: 20px;
+  }
+  .config {
+    margin: 2.5% 10% 2.5% 10%;
+  }
+  .configDark {
+    text-wrap: nowrap;
+    background-color: rgb(98, 5, 186);
+  }
+  .exitButton {
+    margin: 0%;
+    background-color: red;
+    overflow: wrap;
+    font-size: 30px;
+  }
+  .modalContent {
+    display: flex;
+    width: 90%;
+    height: auto;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 5%;
+    background-color: rgb(98, 80, 186);
+    border-radius: 30px;
+  }
+  .HrDiv {
+    width: 100%;
+    height: 15px;
+    background-color: rgb(98, 5, 186);
+    margin: 0px;
+  }
+  .horiTab, .vertTab {
+    display: flex;
+    appearance: none;
+    flex-grow: 1;
+    background-color: rgb(98, 5, 186);
+    border-color: rgb(255, 218, 126);
+    color: rgb(255, 218, 126);
+    cursor: pointer;
+    font-size: 30px;
+    margin: 0px;
+    padding: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .horiTab:checked {
+    background-color: rgb(98, 80, 186);
+    border: 2px solid rgb(255, 218, 126);
+    border-right: none;
+  }
+  .vertTab:checked {
+    background-color: rgb(98, 80, 186);
+    border: 2px solid rgb(255, 218, 126);
+    border-bottom: none;
+  }
+  .horiTab::before, .vertTab::before{
+    content: attr(value);
+    position: relative;
+  }
+  .horiTab {
+    border-radius: 30px 0px 0px 30px;
+    border-right: 2px solid rgb(255, 218, 126);
+  }
+  .vertTab {
+    border-radius: 30px 30px 0px 0px;
+    border-bottom: 2px solid rgb(255, 218, 126);
+  }
+  .sliderContainerDiv {
+    display: flex;
+    flex-grow: 1;
+    max-width: 100%;
+    flex-direction: column;
+    align-items: center;
+    height: 100%;
+  }
+  .floatingDiv {
+    display: none;
+    flex-grow: 1;
+    flex-direction: row;
+    margin: 2%;
+    overflow-y: auto;
+    overflow-x: auto;
+  }
+  .sliderIconCanvas {
+    margin: 10px;
+    width: 128px;
+    height: 64px;
+    background-color: black;
+  }
+  .mute, .router {
+    appearance: none;
+    width: 40px;
+    height: 40px;
+    background-color: white;
+    border-radius: 10px;
+  }
+  .router {
+    margin: 0px;
+  }
+  .mute:checked {
+    background-color: red;
+  }
+  .router:checked {
+    background-color: lightgreen;
+    margin: 0px;
+  }
+  .slider {
+    width: 100%;
+    background-color: black;
+    color: black;
+    accent-color: rgb(255, 218, 126);
+    writing-mode: vertical-lr;
+    direction: rtl;
+    width: 16px;
+    vertical-align: bottom;
+    margin: 0px 0px 0px 0px;
+    font-size: 10px;
+  }
+  .settingsElement {
+    width: 100%;
+    background-color: black;
+    color: black;
+    accent-color: rgb(255, 218, 126);
+  }
+  .KeyConfigButton {
+    appearance: none;
+    width: 4.33%;
+    height: 100%;
+    background-color: rgb(98, 5, 186);
+    color: rgb(255, 218, 126);
+    border-color:rgb(255, 218, 126);
+    border-radius: 10px 10px 10px 10px;
+    cursor: pointer;
+    font-size: 15px;
+    margin: 0px 0px 0px 0px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .KeyboardRow {
+    display: flex;
+    width: 100%;
+    height: 13%;
+  }
+  .rowDirection {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+  }
+  .columnDirection, .columnDirectionBorder {
+    display: flex;
+    flex-grow: 1;
+    flex-direction: column;
+    background-color:rgb(98, 80, 186);
+    border-radius: 30px;
+    margin: 0% 1% 0% 1%;
+  }
+  .columnDirectionBorder {
+    width: min-content;
+    border: 2px solid rgb(255, 218, 126);
+  }
+  .expandCollapseButton {
+    height: 95%;
+    width: 40px;
+    min-width: 40px;
+    max-width: 40px;
+  }
+  .expandCollapseDiv {
+    width: 40px;
+    min-width: 40px;
+    max-width: 40px;
+  }
+  .micSlider {
+    margin: 0% 0% 0% 0%;
+    box-sizing: border-box;
+    min-width: min-content;
+  }
+  .expandingHoriDiv {
+    box-sizing: border-box;
+  }
+  h1, h2, h3 {
+    padding: 0;
+    margin: 0 30px;
+    text-align: center;
+    text-wrap: nowrap;
+    color: rgb(255, 218, 126);
+  }
+  h3 {
+    margin: 0px 5px;
+  }
+  input[type=range][orient=vertical] {
+    writing-mode: vertical-lr;
+    direction: rtl;
+    width: 16px;
+    vertical-align: bottom;
+    margin: 0px 0px 0px 0px;
+    font-size: 10px;
+  }
+  dialog.config {
+    position: fixed;
+    z-index: 1000;
+    padding: 20px;
+    border-radius: 10px;
+    background-color: rgb(98, 5, 186);
+    width: 80%;
+    height: 80%;
+    max-height: 80%;
+    overflow-y: scroll;
+    border-radius: 30px;
+  }
+  input, textarea, select {
+    background-color: rgb(98, 5, 186);
+    border-color: rgb(255, 218, 126);
+    color: rgb(255, 218, 126);
+    border-radius: 30px;
+    margin: 10px;
+    font-size: 30px;
+  }
+  input[type=file] {
+    background-color: rgb(98, 5, 186);
+    border-color: rgb(255, 218, 126);
+    color: rgb(255, 218, 126);
+    border-radius: 30px;
+    margin: 10px;
+    font-size: 30px;
+  }
+  table, td {
+    border: 2px solid rgb(255, 218, 126);
+    margin: 0px;
+    padding: 0px;
+    border-collapse: collapse;
+    text-align: center;
+  }
+  table {
+    width: 90%;
+    table-layout: auto;
+    margin: 0% 2% 0% 2%;
+    border: none;
+  }
+</style>
+<title>Yapro Pad Configurator</title>
+</head>
+<body>
+<div id="mainBodyDiv">
+  <div id="modalDiv">
+    <!--Settings Modal-->
+    <dialog id="settingsDialog" class="config">
+      <button onclick="document.getElementById('settingsDialog').close();" class="exitButton">x</button>
+      <div class="modalContent">
+        <h1>Settings</h1>
+        <label for="sliderCountElement">Number of Sliders</label>
+        <input id="sliderCountElement" type="number" class="SettingsElement" placeholder="6" min="0" max="10">
+        <label for="keyboardCountElement">Number of Keyboards</label>
+        <input id="keyboardCountElement" type="number" class="SettingsElement" placeholder="4" min="0" max="4">
+        <label for="oledType">OLED Type</label>
+        <select id="oledType" class="SettingsElement">
+          <option value="blue">Blue</option>
+          <option value="white">White</option>
+          <option value="blueYellow">Blue and Yellow</option>
+        </select>
+        <button id="saveButton" class="configDark" onClick="saveChanges()">Save Changes</button>
+      </div>
+    </dialog>
+    <!--Instructions Modal-->
+    <dialog id="InstructionsDialog" class="config">
+      <button onclick="document.getElementById('InstructionsDialog').close();" class="exitButton">x</button>
+      <div class="modalContent">
+        <h1>Instructions</h1>
+        <p>
+        This is the Yapro Pad Configuration webpage where you can set the modes and functions of the various inputs such as sliders, and keyboard buttons.
+        </p>
+        <h2>Sidebar And Configuration Settings</h2>
+        <p>This is the Yapro Pad Configuration webpage where you can set the modes and functions of the various inputs such as sliders, and keyboard buttons.
+          Starting with the sidebar there is the option to upload an existing configuration file for modification and an option to download a config File
+          with the options as they have been configured on the webpage. The settings button will alow you to configure how many sliders and input Keyboards
+          your specific Yapro Pad has connected and to configure the colors supported by your slider displays. The sliders within the configurator should match 
+          the number of sliders that you have on your device and will display the Name of what the slider controlls such as "Discord" the icon of the slider
+          the current volume and whether or not the current slider is muted. You can change the Volume level and mute status by either manually ajusting the slider 
+          or mute button on the device or clicking its representation within the configurator. The configurator also allows you to change the name and icon of
+          a slider simply by clicking on either the name or the icon within the configurator.
+        </p>
+        <h2>Sliders</h2>
+        <p>
+          The sliders within the configurator should match the number of sliders that you have on your device and will display the Name of what the slider controlls 
+          such as "Discord" the icon of the slider the current volume and whether or not the current slider is muted. You can change the Volume level and mute status
+          by either manually ajusting the slider or mute button on the device or clicking its representation within the configurator. The configurator also allows you
+          to change the name and icon of a slider simply by clicking on either the name or the icon within the configurator.
+        </p>
+        <h2>Keyboards</h2>
+        <p>
+          The keyboard configuration section of the configurator allows you to select which keyboard you are configuring and then set the function of each key.
+          the sidebar displays a list of configured keyboards and hilights the currently selected keyboard. 
+        </p>
+        <h2>Technical Specifics</h2>
+        <h2>Links to External Resources</h2>
+      </div>
+    </dialog>
+    <!--Key Configuration Modal-->
+    <dialog id="KeyConfigForm" class="config">
+      <button onclick="document.getElementById('KeyConfigForm').close();" class="exitButton">x</button>
+      <div id="KeyConfigFormInner">
+        <h1>Key Configuration</h1>
+        <div id="KeyModeSelectorDiv">
+          <input type="radio" id="SoundboardModeSelector" class="vertTab" name="ButtonMode" value="Macro" onClick="repopulateFormContent('radio')" checked>
+          <input type="radio" id="MacroModeSelector" class="vertTab" name="ButtonMode" value="Soundboard" onClick="repopulateFormContent('soundboard')">
+        </div>
+        <div id="KeyFunctionSelectorDiv">
+          <label for="macro-name">Macro Name:</label><br>
+          <input type="text" id="macro-name" name="macro-name" required><br>
+          <label for="keyCombinationTextarea">Key Combination:</label><br>
+          <textarea cols="30" rows="5" id="keyCombinationTextarea"></textarea><br>
+          <button type="button" id="clear" class="configDark" onclick="clearKeyCombination()">Clear</button>
+          <input type="hidden" name="button-id" class="config" value="${ConfigButtonId}">
+        </div>
+      </div>
+    </dialog>
+    <dialog id="micSetupModal" class="config">
+      <button onclick="document.getElementById('micSetupModal').close();" class="exitButton">x</button>
+      <div id="micSetupModalInner" class="columnDirectionBorder">
+        <h1>Mic Setup</h1>
+        <div id="micSetupContainer" class="rowDirection">
+          <div id="micTypeSelector" class="columnDirectionBorder">
+            <h2>Mic Type</h2>
+            <input type="radio" id="dynamicMic" class="config" name="micType" value="dynamic" checked>
+            <input type="radio" id="condenserMic" class="config" name="micType" value="condenser">
+            <input type="radio" id="headsetMic" class="config" name="micType" value="headset">
+          </div>
+          <div id="micGainSelector" class="columnDirectionBorder">
+            <h2>Mic Gain</h2>
+            <input type="range" min="0" max="100" value="50" class="slider" id="micGainSlider">
+            <h3 class="volumePercentage">50<br>%</h3>
+          </div>
+          <div id="micMeter" class="columnDirectionBorder">
+            <h2>Mic Meter</h2>
+            <p>I havent worked out what to put here yet</p>
+          </div>
+        </div>
+      </div>
+    </dialog>
+  </div>  
+  <div id="topSectionDiv">
+    <div id="sidebarDiv">
+      <h1>Yapro Pad Configurator</h1><br>
+      <button id="uploadConfigFileButton" class="config"><label for="uploadConfigFile">Upload Existing Configuration File</label></button>
+      <input type="file" id="uploadConfigFile" value="Upload Existing Configuration File"><br>
+      <button id="downloadConfigFile" class="config">Download Configuration File</button>
+      <button id="settingsButton" class="config" onclick="document.getElementById('settingsDialog').show();">Settings</button>
+      <button id="InstructionsButton" class="config" onclick="document.getElementById('InstructionsDialog').show();">Help/Instructions</button>
+    </div>
+    <div id="sliderConfigurationDiv">
+      <div class="sliderContainerDiv">
+        <h2>Channel 1</h2>
+        <canvas id="sliderOneCanvas" class="sliderIconCanvas"></canvas>
+        <input type="range" min="0" max="255" value="50" class="slider" id="sliderOne" orient="vertical">
+        <input type="checkbox" id="sliderOneMute" class="mute">
+        <h2>Mute</h2>
+      </div>
+      <div class="sliderContainerDiv">
+        <h2>Channel 2</h2>
+        <canvas id="sliderTwoCanvas" class="sliderIconCanvas"></canvas>
+        <input type="range" min="0" max="255" value="50" class="slider" id="sliderTwo" orient="vertical">
+        <input type="checkbox" id="sliderTwoMute" class="mute">
+        <h2>Mute</h2>
+      </div>
+      <div class="sliderContainerDiv">
+        <h2>Channel 3</h2>
+        <canvas id="sliderThreeCanvas" class="sliderIconCanvas"></canvas>
+        <input type="range" min="0" max="255" value="50" class="slider" id="sliderThree" orient="vertical">
+        <input type="checkbox" id="sliderThreeMute" class="mute">
+        <h2>Mute</h2>
+      </div>
+      <div class="sliderContainerDiv">
+        <h2>Channel 4</h2>
+        <canvas id="sliderFourCanvas" class="sliderIconCanvas"></canvas>
+        <input type="range" min="0" max="255" value="50" class="slider" id="sliderFour" orient="vertical">
+        <input type="checkbox" id="sliderFourMute" class="mute">
+        <h2>Mute</h2>
+      </div>
+      <div class="sliderContainerDiv">
+        <h2>Channel 5</h2>
+        <canvas id="sliderFiveCanvas" class="sliderIconCanvas"></canvas>
+        <input type="range" min="0" max="255" value="50" class="slider" id="sliderFive" orient="vertical">
+        <input type="checkbox" id="sliderFiveMute" class="mute">
+        <h2>Mute</h2>
+      </div>
+      <div class="sliderContainerDiv">
+        <h2>Channel 6</h2>
+        <canvas id="sliderSixCanvas" class="sliderIconCanvas"></canvas>
+        <input type="range" min="0" max="255" value="50" class="slider" id="sliderSix" orient="vertical">
+        <input type="checkbox" id="sliderSixMute" class="mute">
+        <h2>Mute</h2>
+      </div>
+    </div>
+  </div>
+  <div class="HrDiv"></div>
+  <div id="menuBarDiv">
+    <!--mic, levels, sliders, keyboard, routing, lighting, settings-->
+    <input type="radio" id="micConfig" class="vertTab" name="menu" value="Mic" onclick="showDivById('floatingMicDiv', 'floatingDiv')">
+    <input type="radio" id="levelsConfig" class="vertTab" name="menu" value="Levels" onclick="showDivById('floatingLevelsDiv', 'floatingDiv')">
+    <input type="radio" id="slidersConfig" class="vertTab" name="menu" value="Sliders" onclick="showDivById('floatingSlidersDiv', 'floatingDiv')">
+    <input type="radio" id="keyboardConfig" class="vertTab" name="menu" value="Keyboard" onclick="showDivById('floatingKeyboardDiv', 'floatingDiv')">
+    <input type="radio" id="routingConfig" class="vertTab" name="menu" value="Routing" onclick="showDivById('floatingRoutingDiv', 'floatingDiv')">
+    <input type="radio" id="lightingConfig" class="vertTab" name="menu" value="Lighting" onclick="showDivById('floatingLightingDiv', 'floatingDiv')">
+    <input type="radio" id="settingsConfig" class="vertTab" name="menu" value="Settings" onclick="showDivById('floatingSettingsDiv', 'floatingDiv')">
+  </div>
+  <div id="bottomSectionDiv">
+    <div id="bottomIslandDiv">
+      <div id="floatingMicDiv" class="floatingDiv">
+        <div id="wideMicContainer" class="rowDirection">
+          <div id="micProfilesDiv" class="columnDirectionBorder expandingHoriDiv">
+            <h2>Mic Profiles</h2>
+            <select id="micProfileSelector" class="configDark">
+              <option value="default">Default</option>
+              <option value="condenser">Condenser</option>
+              <option value="dynamic">Dynamic</option>
+              <option value="headset">Headset</option>
+            </select>
+          </div>
+          <div id="micSetupDiv" class="columnDirectionBorder expandingHoriDiv">
+            <h2>Mic Setup</h2>
+            <button id="micSetupButton" class="configDark" onclick="document.getElementById('micSetupModal').show();">Mic Setup</button>
+          </div>
+          <div id="micGateContainerDiv" class="columnDirectionBorder expandingHoriDiv">
+            <h2>Gate</h2>
+            <div id="micGateContentDiv" class="rowDirection expandingHoriDiv">
+              <div id="micBasicGateContainerDiv" class="columnDirection expandingHoriDiv micGateSettings">
+                <div id="micBasicGateContentDiv" class="rowDirection">
+                  <div id="micGateAmmountSliderDiv" class="sliderContainerDiv micSlider">
+                    <h3>Amount</h3>
+                    <input type="range" min="0" max="100" value="50" class="slider" id="micGateAmmountSliderLevel" onclick="updateSliderLevel('micGateAmmountVolumePercentage',this.value)">
+                    <h3 class="volumePercentage" id="micGateAmmountVolumePercentage">50</h3><br>
+                    <h3 class="volumePercentage">%</h3>
+                  </div>
+                </div>
+                <button id="showAdvancedMicGateSettings" class="configDark" onclick="showDivById('micAdvancedGateContainerDiv','micGateSettings')">Advanced</button>
+              </div>
+              <div id="micAdvancedGateContainerDiv" class="columnDirection expandingHoriDiv micGateSettings" style="display: none;">
+                <div id="micAdvancedGateContentDiv" class="rowDirection">
+                  <div id="micGateThresholdSliderDiv" class="sliderContainerDiv micSlider">
+                    <h3>Threshold</h3>
+                    <input type="range" min="-60" max="0" value="50" class="slider" id="micGateThresholdSliderLevel" onclick="updateSliderLevel('micThresholdDbReduction',this.value)">
+                    <h3 class="volumePercentage" id="micThresholdDbReduction">0</h3><br>
+                    <h3 class="volumePercentage">dB</h3>
+                  </div>
+                  <div id="micGateAttenuationSliderDiv" class="sliderContainerDiv micSlider">
+                    <h3>Attenuation</h3>
+                    <input type="range" min="0" max="100" value="50" class="slider" id="micAttenuationSliderLevel" onclick="updateSliderLevel('micAttenuationPercentage',this.value)">
+                    <h3 class="volumePercentage" id="micAttenuationPercentage">0</h3><br>
+                    <h3 class="volumePercentage">%</h3>
+                  </div>
+                  <div id="micGateAttackSliderDiv" class="sliderContainerDiv">
+                    <h3>Attack</h3>
+                    <input type="range" min="10" max="2000" value="50" class="slider" id="micAttackMsSliderLevel" onclick="updateSliderLevel('micAttackMsDelay',this.value)">
+                    <h3 class="volumePercentage" id="micAttackMsDelay">0</h3><br>
+                    <h3 class="volumePercentage">Ms</h3>
+                  </div>
+                  <div id="micGateReleaseSliderDiv" class="sliderContainerDiv">
+                    <h3>Release</h3>
+                    <input type="range" min="10" max="2000" value="50" class="slider" id="micReleaseMsSliderLevel" onclick="updateSliderLevel('micReleaseMsDelay',this.value)">
+                    <h3 class="volumePercentage" id="micReleaseMsDelay">0</h3><br>
+                    <h3 class="volumePercentage">Ms</h3>
+                  </div>
+                </div>
+                <button id="showAdvancedMicGateSettings" class="configDark" onclick="showDivById('micBasicGateContainerDiv','micGateSettings')">Basic</button>
+              </div>
+            </div>
+          </div>
+          <div id="micEqualizerContainerDiv" class="columnDirectionBorder expandingHoriDiv">
+            <h2>Equalizer</h2>
+            <div id="micEqualizerContentDiv" class="rowDirection expandingHoriDiv">
+              <div id="micBasicEqualizerContainerDiv" class="columnDirection expandingHoriDiv micEqualizerSettings">
+                <div id="micBasicEqualizerContentDiv" class="rowDirection">
+                  <div id="micEqualizerAmmountSliderDiv" class="sliderContainerDiv micSlider">
+                    <h3>Bass</h3>
+                    <input type="range" min="-9" max="9" value="50" class="slider" id="micBassSliderLevel" onclick="updateSliderLevel('micBassLevel',this.value)">
+                    <h3 class="volumePercentage" id="micBassLevel">0</h3><br>
+                  </div>
+                  <div id="micEqualizerAmmountSliderDiv" class="sliderContainerDiv micSlider">
+                    <h3>Mid</h3>
+                    <input type="range" min="-9" max="9" value="50" class="slider" id="micMidSliderLevel" onclick="updateSliderLevel('micMidLevel',this.value)">
+                    <h3 class="volumePercentage" id="micMidLevel">0</h3><br>
+                  </div>
+                  <div id="micEqualizerAmmountSliderDiv" class="sliderContainerDiv micSlider">
+                    <h3>Treble</h3>
+                    <input type="range" min="-9" max="9" value="50" class="slider" id="micTrebleSliderLevel" onclick="updateSliderLevel('micTrebleLevel',this.value)">
+                    <h3 class="volumePercentage" id="micTrebleLevel">0</h3><br>
+                  </div>
+                </div>
+                <button id="showAdvancedMicEqualizerSettings" class="configDark" onclick="showDivById('micAdvancedEqualizerContainerDiv','micEqualizerSettings')">Advanced</button>
+              </div>
+              <div id="micAdvancedEqualizerContainerDiv" class="columnDirection expandingHoriDiv micEqualizerSettings" style="display: none;">
+                <div id="micAdvancedEqualizerContentDiv" class="rowDirection">
+                  <div id="mic31.5HzSliderDiv" class="sliderContainerDiv micSlider">
+                    <h3>31.5Hz</h3>
+                    <input type="range" min="-9" max="9" value="0" class="slider" id="mic31.5HzSliderLevel" onclick="updateSliderLevel('mic31.5HzLevel',this.value)">
+                    <h3 class="volumePercentage" id="mic31.5HzLevel">0</h3><br>
+                  </div>
+                  <div id="mic63HzSliderDiv" class="sliderContainerDiv micSlider">
+                    <h3>63Hz</h3>
+                    <input type="range" min="-9" max="9" value="0" class="slider" id="mic63HzSliderLevel" onclick="updateSliderLevel('mic63HzLevel',this.value)">
+                    <h3 class="volumePercentage" id="mic63HzLevel">0</h3><br>
+                  </div>
+                  <div id="mic125HzSliderDiv" class="sliderContainerDiv micSlider">
+                    <h3>125Hz</h3>
+                    <input type="range" min="-9" max="9" value="0" class="slider" id="mic125HzSliderLevel" onclick="updateSliderLevel('mic125HzLevel',this.value)">
+                    <h3 class="volumePercentage" id="mic125HzLevel">0</h3><br>
+                  </div>
+                  <div id="mic250HzSliderDiv" class="sliderContainerDiv micSlider">
+                    <h3>250Hz</h3>
+                    <input type="range" min="-9" max="9" value="0" class="slider" id="mic250HzSliderLevel" onclick="updateSliderLevel('mic250HzLevel',this.value)">
+                    <h3 class="volumePercentage" id="mic250HzLevel">0</h3><br>
+                  </div>
+                  <div id="mic500HzSliderDiv" class="sliderContainerDiv micSlider">
+                    <h3>500Hz</h3>
+                    <input type="range" min="-9" max="9" value="0" class="slider" id="mic500HzSliderLevel" onclick="updateSliderLevel('mic500HzLevel',this.value)">
+                    <h3 class="volumePercentage" id="mic500HzLevel">0</h3><br>
+                  </div>
+                  <div id="mic1kHzSliderDiv" class="sliderContainerDiv micSlider">
+                    <h3>1kHz</h3>
+                    <input type="range" min="-9" max="9" value="0" class="slider" id="mic1kHzSliderLevel" onclick="updateSliderLevel('mic1kHzLevel',this.value)">
+                    <h3 class="volumePercentage" id="mic1kHzLevel">0</h3><br>
+                  </div>
+                  <div id="mic2kHzSliderDiv" class="sliderContainerDiv micSlider">
+                    <h3>2kHz</h3>
+                    <input type="range" min="-9" max="9" value="0" class="slider" id="mic2kHzSliderLevel" onclick="updateSliderLevel('mic2kHzLevel',this.value)">
+                    <h3 class="volumePercentage" id="mic2kHzLevel">0</h3><br>
+                  </div>
+                  <div id="mic4kHzSliderDiv" class="sliderContainerDiv micSlider">
+                    <h3>4kHz</h3>
+                    <input type="range" min="-9" max="9" value="0" class="slider" id="mic4kHzSliderLevel" onclick="updateSliderLevel('mic4kHzLevel',this.value)">
+                    <h3 class="volumePercentage" id="mic4kHzLevel">0</h3><br>
+                  </div>
+                  <div id="mic8kHzSliderDiv" class="sliderContainerDiv micSlider">
+                    <h3>8kHz</h3>
+                    <input type="range" min="-9" max="9" value="0" class="slider" id="mic8kHzSliderLevel" onclick="updateSliderLevel('mic8kHzLevel',this.value)">
+                    <h3 class="volumePercentage" id="mic8kHzLevel">0</h3><br>
+                  </div>
+                  <div id="mic16kHzSliderDiv" class="sliderContainerDiv micSlider">
+                    <h3>16kHz</h3>
+                    <input type="range" min="-9" max="9" value="0" class="slider" id="mic16kHzSliderLevel" onclick="updateSliderLevel('mic16kHzLevel',this.value)">
+                    <h3 class="volumePercentage" id="mic16kHzLevel">0</h3><br>
+                  </div>
+                </div>
+                <button id="showAdvancedMicGateSettings" class="configDark" onclick="showDivById('micBasicEqualizerContainerDiv','micEqualizerSettings')">Basic</button>
+              </div>
+            </div>
+          </div>
+          <div id="micCompressorContainerDiv" class="columnDirectionBorder expandingHoriDiv">
+            <h2>Compressor</h2>
+            <div id="micBasicCompressorContainerDiv" class="columnDirection expandingHoriDiv micCompressorSettings">
+              <div id="micBasicCompressorContentDiv" class="rowDirection">
+                <div id="micCompressorAmmountSliderDiv" class="sliderContainerDiv">
+                  <h3>Ammount</h3>
+                  <input type="range" min="0" max="100" value="50" class="slider" id="micCompressorAmmountSliderLevel" onclick="updateSliderLevel('micCompressorAmmountPercentage',this.value)">
+                  <h3 class="volumePercentage" id="micCompressorAmmountPercentage">50</h3><br>
+                  <h3 class="volumePercentage">%</h3>
+                </div>
+              </div>
+              <button id="showAdvancedMicCompressorSettings" class="configDark" onclick="showDivById('micAdvancedCompressorContainerDiv','micCompressorSettings')">Advanced</button>
+            </div>
+            <div id="micAdvancedCompressorContainerDiv" class="columnDirection expandingHoriDiv micCompressorSettings" style="display: none;">
+              <div id="micAdvancedCompressorContentDiv" class="rowDirection">
+                <div id="micCompressorThresholdSliderDiv" class="sliderContainerDiv">
+                  <h3>Threshold</h3>
+                  <input type="range" min="-40" max="0" value="0" class="slider" id="micThresholdDbReductionSliderLevel" onclick="updateSliderLevel('micThresholdDbReductionPercentage',this.value)">
+                  <h3 class="volumePercentage" id="micThresholdDbReductionPercentage">0</h3><br>
+                  <h3 class="volumePercentage">dB</h3>
+                </div>
+                <div id="micCompressorRatioSliderDiv" class="sliderContainerDiv">
+                  <h3>Ratio</h3>
+                  <input type="range" min="1" max="64" value="50" class="slider" id="micCompressorRatioSliderLevel" onclick="updateSliderLevel('micCompressorRatio',this.value)">
+                  <h3 class="volumePercentage" id="micCompressorRatio">50</h3>
+                  <h3 class="volumePercentage">/<br>1</h3>
+                </div>
+                <div id="micCompressorAttackSliderDiv" class="sliderContainerDiv">
+                  <h3>Attack</h3>
+                  <input type="range" min="1" max="40" value="40" class="slider" id="micCompressorAttackMsSliderLevel" onclick="updateSliderLevel('micCompressorAttackMs',this.value)">
+                  <h3 class="volumePercentage" id="micCompressorAttackMs">50</h3><br>
+                  <h3 class="volumePercentage">Ms</h3>
+                </div>
+                <div id="micCompressorReleaseSliderDiv" class="sliderContainerDiv">
+                  <h3>Release</h3>
+                  <input type="range" min="0" max="3000" value="0" class="slider" id="micCompressorReleaseMsSliderLevel" onclick="updateSliderLevel('micCompressorReleaseMs',this.value)">
+                  <h3 class="volumePercentage" id="micCompressorReleaseMs">50</h3><br>
+                  <h3 class="volumePercentage">Ms</h3>
+                </div>
+                <div id="micCompressorMakeUpGainSliderDiv" class="sliderContainerDiv">
+                  <h3>Make-Up Gain</h3>
+                  <input type="range" min="0" max="22" value="20" class="slider" id="micCompressorMakeUpGainDbBoostSliderLevel" onclick="updateSliderLevel('micCompressorMakeUpGainDbBoost',this.value)">
+                  <h3 class="volumePercentage" id="micCompressorMakeUpGainDbBoost">50</h3><br>
+                  <h3 class="volumePercentage">dB</h3>
+                </div>
+              </div>
+              <button id="showAdvancedMicCompressorSettings" class="configDark" onclick="showDivById('micBasicCompressorContainerDiv','micCompressorSettings')">Basic</button>
+            </div>
+          </div>
+          <div id="micDeEsserContainerDiv" class="columnDirectionBorder expandingHoriDiv">
+            <h2>De-Esser</h2>
+            <div id="micDeEsserAmmountSliderDiv" class="sliderContainerDiv">
+              <h3>Ammount</h3>
+              <input type="range" min="0" max="100" value="50" class="slider" id="micDeEsserSliderLevel" onclick="updateSliderLevel('micDeEsserPercentage',this.value)">
+              <h3 class="volumePercentage" id="micDeEsserPercentage">50</h3><br>
+              <h3 class="volumePercentage">%</h3>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div id="floatingLevelsDiv" class="floatingDiv">
+        <div id="inputsLevelsDiv" class="columnDirectionBorder expandingHoriDiv">
+          <div id="inputsLevelsHeaderDiv" class="rowDirection">
+            <h1>Inputs</h1>
+          </div>
+          <div id="inputLevelsButtonWrapper" class="columnDirection buttonWrapper">
+            <div id="InputLevelsSliderDiv" class="rowDirection">
+              <div id="micLevelsSliderDiv" class="sliderContainerDiv">
+                <h3>Mic</h3>
+                <h3>Vol</h3>
+                <input type="range" min="0" max="100" value="50" class="slider" id="micBasicSliderLevel" onclick="updateSliderLevel('micBasicVolumePercentage',this.value)">
+                <h3 class="volumePercentage" id="micBasicVolumePercentage">50</h3><br>
+                <h3 class="volumePercentage">%</h3>
+              </div>
+              <div id="commsLevelsSliderDiv" class="sliderContainerDiv">
+                <h3>Comms</h3>
+                <h3>Vol</h3>
+                <input type="range" min="0" max="100" value="50" class="slider" id="commsBasicSliderLevel" onclick="updateSliderLevel('commsBasicVolumePercentage',this.value)">
+                <h3 class="volumePercentage" id="commsBasicVolumePercentage">50</h3><br>
+                <h3 class="volumePercentage">%</h3>
+              </div>
+              <div id="musicLevelsSliderDiv" class="sliderContainerDiv">
+                <h3>Music</h3>
+                <h3>Vol</h3>
+                <input type="range" min="0" max="100" value="50" class="slider" id="musicBasicSliderLevel" onclick="updateSliderLevel('musicBasicVolumePercentage',this.value)">
+                <h3 class="volumePercentage" id="musicBasicVolumePercentage">50</h3><br>
+                <h3 class="volumePercentage">%</h3>
+              </div>
+              <div id="gameLevelsSliderDiv" class="sliderContainerDiv">
+                <h3>Game</h3>
+                <h3>Vol</h3>
+                <input type="range" min="0" max="100" value="50" class="slider" id="gameBasicSliderLevel" onclick="updateSliderLevel('gameBasicVolumePercentage',this.value)">
+                <h3 class="volumePercentage" id="gameBasicVolumePercentage">50</h3><br>
+                <h3 class="volumePercentage">%</h3>
+              </div>
+              <div id="consoleLevelsSliderDiv" class="sliderContainerDiv">
+                <h3>Console</h3>
+                <h3>Vol</h3>
+                <input type="range" min="0" max="100" value="50" class="slider" id="consoleBasicSliderLevel" onclick="updateSliderLevel('consoleBasicVolumePercentage',this.value)">
+                <h3 class="volumePercentage" id="consoleBasicVolumePercentage">50</h3><br>
+                <h3 class="volumePercentage">%</h3>
+              </div>
+              <div id="lineInLevelsSliderDiv" class="sliderContainerDiv">
+                <h3>Line In</h3>
+                <h3>Vol</h3>
+                <input type="range" min="0" max="100" value="50" class="slider" id="lineInBasicSliderLevel" onclick="updateSliderLevel('lineInBasicVolumePercentage',this.value)">
+                <h3 class="volumePercentage" id="lineInBasicVolumePercentage">50</h3><br>
+                <h3 class="volumePercentage">%</h3>
+              </div>
+              <div id="systemLevelsSliderDiv" class="sliderContainerDiv">
+                <h3>System</h3>
+                <h3>Vol</h3>
+                <input type="range" min="0" max="100" value="50" class="slider" id="systemBasicSliderLevel" onclick="updateSliderLevel('systemBasicVolumePercentage',this.value)">
+                <h3 class="volumePercentage" id="systemBasicVolumePercentage">50</h3><br>
+                <h3 class="volumePercentage">%</h3>
+              </div>
+              <div id="soundboardLevelsSliderDiv" class="sliderContainerDiv">
+                <h3>Sfx</h3>
+                <h3>Vol</h3>
+                <input type="range" min="0" max="100" value="50" class="slider" id="soundboardBasicSliderLevel" onclick="updateSliderLevel('soundboardBasicVolumePercentage',this.value)">
+                <h3 class="volumePercentage" id="soundboardBasicVolumePercentage">50</h3><br>
+                <h3 class="volumePercentage">%</h3>
+              </div>
+            </div>
+            <button id="showSubmixButton" class="configDark" onclick="showDivById('submixSliderButtonWrapper','buttonWrapper')">Stereo Levels</button>
+          </div>
+          <div id="submixSliderButtonWrapper" class="columnDirection buttonWrapper" style="display: none;">
+            <div id="submixLevelsSliderDiv"class="rowDirection">
+              <div id="micLevelsSubmixSlidersContainerDiv" class="columnDirection">
+                <div id="micLevelsSubmixHeaderDiv" class="rowDirection">
+                  <h3>Mic</h3>
+                </div>
+                <div id="micLevelsSubmixSlidersDiv" class="rowDirection">
+                  <div id="micSubmixLeftSlider" class="sliderContainerDiv">
+                    <h3>L</h3>
+                    <input type="range" min="0" max="100" value="50" class="slider" id="micLeftSliderLevel" onclick="updateSliderLevel('micLeftVolumePercentage',this.value)">
+                    <h3 class="volumePercentage" id="micLeftVolumePercentage">50</h3><br>
+                    <h3 class="volumePercentage">%</h3>
+                  </div>
+                  <div id="micSubmixRightSlider" class="sliderContainerDiv">
+                    <h3>R</h3>
+                    <input type="range" min="0" max="100" value="50" class="slider" id="micRightSliderLevel" onclick="updateSliderLevel('micRightVolumePercentage',this.value)">
+                    <h3 class="volumePercentage" id="micRightVolumePercentage">50</h3><br>
+                    <h3 class="volumePercentage">%</h3>
+                  </div>
+                </div>
+              </div>
+              <div id="commsLevelsSubmixSlidersContainerDiv" class="columnDirection">
+                <div id="commsLevelsSubmixHeaderDiv" class="rowDirection">
+                  <h3>Comms</h3>
+                </div>
+                <div id="commsLevelsSubmixSlidersDiv" class="rowDirection">
+                  <div id="commsSubmixLeftSlider" class="sliderContainerDiv">
+                    <h3>L</h3>
+                    <input type="range" min="0" max="100" value="50" class="slider" id="commsLeftSliderLevel" onclick="updateSliderLevel('commsLeftVolumePercentage',this.value)">
+                    <h3 class="volumePercentage" id="commsLeftVolumePercentage">50</h3><br>
+                    <h3 class="volumePercentage">%</h3>
+                  </div>
+                  <div id="commsSubmixRightSlider" class="sliderContainerDiv">
+                    <h3>R</h3>
+                    <input type="range" min="0" max="100" value="50" class="slider" id="commsRightSliderLevel" onclick="updateSliderLevel('commsRightVolumePercentage',this.value)">
+                    <h3 class="volumePercentage" id="commsRightVolumePercentage">50</h3><br>
+                    <h3 class="volumePercentage">%</h3>
+                  </div>
+                </div>
+              </div>
+              <div id="musicLevelsSubmixSlidersContainerDiv" class="columnDirection">
+                <div id="musicLevelsSubmixHeaderDiv" class="rowDirection">
+                  <h3>Music</h3>
+                </div>
+                <div id="musicLevelsSubmixSlidersDiv" class="rowDirection">
+                  <div id="musicSubmixLeftSlider" class="sliderContainerDiv">
+                    <h3>L</h3>
+                    <input type="range" min="0" max="100" value="50" class="slider" id="musicLeftSliderLevel" onclick="updateSliderLevel('musicLeftVolumePercentage',this.value)">
+                    <h3 class="volumePercentage" id="musicLeftVolumePercentage">50</h3><br>
+                    <h3 class="volumePercentage">%</h3>
+                  </div>
+                  <div id="musicSubmixRightSlider" class="sliderContainerDiv">
+                    <h3>R</h3>
+                    <input type="range" min="0" max="100" value="50" class="slider" id="musicRightSliderLevel" onclick="updateSliderLevel('musicRightVolumePercentage',this.value)">
+                    <h3 class="volumePercentage" id="musicRightVolumePercentage">50</h3><br>
+                    <h3 class="volumePercentage">%</h3>
+                  </div>
+                </div>
+              </div>
+              <div id="gameLevelsSubmixSlidersContainerDiv" class="columnDirection">
+                <div id="gameLevelsSubmixHeaderDiv" class="rowDirection">
+                  <h3>Game</h3>
+                </div>
+                <div id="gameLevelsSubmixSlidersDiv" class="rowDirection">
+                  <div id="gameSubmixLeftSlider" class="sliderContainerDiv">
+                    <h3>L</h3>
+                    <input type="range" min="0" max="100" value="50" class="slider" id="gameLeftSliderLevel" onclick="updateSliderLevel('gameLeftVolumePercentage',this.value)">
+                    <h3 class="volumePercentage" id="gameLeftVolumePercentage">50</h3><br>
+                    <h3 class="volumePercentage">%</h3>
+                  </div>
+                  <div id="gameSubmixRightSlider" class="sliderContainerDiv">
+                    <h3>R</h3>
+                    <input type="range" min="0" max="100" value="50" class="slider" id="gameRightSliderLevel" onclick="updateSliderLevel('gameRightVolumePercentage',this.value)">
+                    <h3 class="volumePercentage" id="gameRightVolumePercentage">50</h3><br>
+                    <h3 class="volumePercentage">%</h3>
+                  </div>
+                </div>
+              </div>
+              <div id="consoleLevelsSubmixSlidersContainerDiv" class="columnDirection">
+                <div id="consoleLevelsSubmixHeaderDiv" class="rowDirection">
+                  <h3>Console</h3>
+                </div>
+                <div id="consoleLevelsSubmixSlidersDiv" class="rowDirection">
+                  <div id="consoleSubmixLeftSlider" class="sliderContainerDiv">
+                    <h3>L</h3>
+                    <input type="range" min="0" max="100" value="50" class="slider" id="consoleLeftSliderLevel" onclick="updateSliderLevel('consoleLeftVolumePercentage',this.value)">
+                    <h3 class="volumePercentage" id="consoleLeftVolumePercentage">50</h3><br>
+                    <h3 class="volumePercentage">%</h3>
+                  </div>
+                  <div id="consoleSubmixRightSlider" class="sliderContainerDiv">
+                    <h3>R</h3>
+                    <input type="range" min="0" max="100" value="50" class="slider" id="consoleRightSliderLevel" onclick="updateSliderLevel('consoleRightVolumePercentage',this.value)">
+                    <h3 class="volumePercentage" id="consoleRightVolumePercentage">50</h3><br>
+                    <h3 class="volumePercentage">%</h3>
+                  </div>
+                </div>
+              </div>
+              <div id="lineInLevelsSubmixSlidersContainerDiv" class="columnDirection">
+                <div id="lineInLevelsSubmixHeaderDiv" class="rowDirection">
+                  <h3>Line In</h3>
+                </div>
+                <div id="lineInLevelsSubmixSlidersDiv" class="rowDirection">
+                  <div id="lineInSubmixLeftSlider" class="sliderContainerDiv">
+                    <h3>L</h3>
+                    <input type="range" min="0" max="100" value="50" class="slider" id="lineInLeftSliderLevel" onclick="updateSliderLevel('lineInLeftVolumePercentage',this.value)">
+                    <h3 class="volumePercentage" id="lineInLeftVolumePercentage">50</h3><br>
+                    <h3 class="volumePercentage">%</h3>
+                  </div>
+                  <div id="lineInSubmixRightSlider" class="sliderContainerDiv">
+                    <h3>R</h3>
+                    <input type="range" min="0" max="100" value="50" class="slider" id="lineInRightSliderLevel" onclick="updateSliderLevel('lineInRightVolumePercentage',this.value)">
+                    <h3 class="volumePercentage" id="lineInRightVolumePercentage">50</h3><br>
+                    <h3 class="volumePercentage">%</h3>
+                  </div>
+                </div>
+              </div>
+              <div id="systemLevelsSubmixSlidersContainerDiv" class="columnDirection">
+                <div id="systemLevelsSubmixHeaderDiv" class="rowDirection">
+                  <h3>System</h3>
+                </div>
+                <div id="systemLevelsSubmixSlidersDiv" class="rowDirection">
+                  <div id="systemSubmixLeftSlider" class="sliderContainerDiv">
+                    <h3>L</h3>
+                    <input type="range" min="0" max="100" value="50" class="slider" id="systemLeftSliderLevel" onclick="updateSliderLevel('systemLeftVolumePercentage',this.value)">
+                    <h3 class="volumePercentage" id="systemLeftVolumePercentage">50</h3><br>
+                    <h3 class="volumePercentage">%</h3>
+                  </div>
+                  <div id="systemSubmixRightSlider" class="sliderContainerDiv">
+                    <h3>R</h3>
+                    <input type="range" min="0" max="100" value="50" class="slider" id="systemRightSliderLevel" onclick="updateSliderLevel('systemRightVolumePercentage',this.value)">
+                    <h3 class="volumePercentage" id="systemRightVolumePercentage">50</h3><br>
+                    <h3 class="volumePercentage">%</h3>
+                  </div>
+                </div>
+              </div>
+              <div id="soundboardLevelsSubmixSlidersContainerDiv" class="columnDirection">
+                <div id="soundboardLevelsSubmixHeaderDiv" class="rowDirection">
+                  <h3>Sfx</h3>
+                </div>
+                <div id="soundboardLevelsSubmixSlidersDiv" class="rowDirection">
+                  <div id="soundboardSubmixLeftSlider" class="sliderContainerDiv">
+                    <h3>L</h3>
+                    <input type="range" min="0" max="100" value="50" class="slider" id="soundboardLeftLevelSlider" onchange="updateSliderLevel('soundboardLeftVolumePercentage',this.value)">
+                    <h3 class="volumePercentage" id="soundboardLeftVolumePercentage">50</h3><br>
+                    <h3 class="volumePercentage">%</h3>
+                  </div>
+                  <div id="soundboardSubmixRightSlider" class="sliderContainerDiv">
+                    <h3>R</h3>
+                    <input type="range" min="0" max="100" value="50" class="slider" id="soundboardRightLevelSlider" onchange="updateSliderLevel('soundboardRightVolumePercentage',this.value)">
+                    <h3 class="volumePercentage" id="soundboardRightVolumePercentage">50</h3><br>
+                    <h3 class="volumePercentage">%</h3>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <button id="hideSubmixButton" class="configDark" onclick="showDivById('inputLevelsButtonWrapper','buttonWrapper')">Basic Levels</button>
+          </div>
+        </div>
+        <div id="bleepLevelsDiv" class="columnDirectionBorder">
+          <div id="bleepLevelsHeaderDiv" class="rowDirection">
+            <h1>Bleep</h1>
+          </div>
+          <div id="bleepLevelsSliderDiv" class="rowDirection">
+            <div id="!&*$%#LevelsSliderDiv" class="sliderContainerDiv">
+              <h3>!&*$%#</h3>
+              <input type="range" min="0" max="100" value="50" class="slider" id="bleepLevelSlider" onchange="updateSliderLevel('bleepVolumePercentage',this.value)">
+              <h3 class="volumePercentage" id="bleepVolumePercentage">50</h3><br>
+              <h3 class="volumePercentage">%</h3>
+            </div>
+          </div>
+        </div>
+        <div id="outputsLevelsDiv" class="columnDirectionBorder">
+          <div id="outputsLevelsHeaderDiv" class="rowDirection">
+            <h1>Outputs</h1>
+          </div>
+          <div id="outputLevelsSliderDiv" class="rowDirection">
+            <div id="lineOutLevelsSliderDiv" class="sliderContainerDiv">
+              <h3>Line<br>Out</h3>
+              <input type="range" min="0" max="100" value="0" class="slider" id="lineOutLevelSlider" onchange="updateSliderLevel('lineOutVolumePercentage',this.value)">
+              <h3 class="volumePercentage" id="lineOutVolumePercentage">0</h3><br>
+              <h3 class="volumePercentage">%</h3>
+            </div>
+            <div id="headphoneLevelsSliderDiv" class="sliderContainerDiv">
+              <h3>Head<br>phones</h3>
+              <input type="range" min="0" max="100" value="0" class="slider" id="headphoneLevelSlider" onchange="updateSliderLevel('headphonesVolumePercentage',this.value)">
+              <h3 class="volumePercentage" id="headphonesVolumePercentage">50</h3><br>
+              <h3 class="volumePercentage">%</h3>
+            </div>
+            <div id="micMonitorLevelsSliderDiv" class="sliderContainerDiv">
+              <h3>Mic<br>Monitor</h3>
+              <input type="range" min="0" max="100" value="50" class="slider" id="micMonitorLevelSlider" onchange="updateSliderLevel('micMonitorVolumePercentage',this.value)">
+              <h3 class="volumePercentage" id="micMonitorVolumePercentage">50</h3><br>
+              <h3 class="volumePercentage">%</h3>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div id="floatingSlidersDiv" class="floatingDiv">
+        <!--sliders settings-->
+        <h1>Sliders Settings</h1>
+      </div>
+      <div id="floatingKeyboardDiv" class="floatingDiv">
+        <!--start of keyboard section-->
+        <div id="keyboardSelectorDiv">
+          <input type="radio" id="KeyboardOne" class="horiTab" name="keyboard" value="One" onclick="populateKbDiv('Keyboard One')" checked><br>
+          <input type="radio" id="KeyboardTwo" class="horiTab" name="keyboard" value="Two" onclick="populateKbDiv('Keyboard Two')"><br>
+          <input type="radio" id="KeyboardThree" class="horiTab" name="keyboard" value="Three" onclick="populateKbDiv('Keyboard Three')"><br>
+          <input type="radio" id="KeyboardFour" class="horiTab" name="keyboard" value="Four" onclick="populateKbDiv('Keyboard Four')">
+        </div>
+        <div id="KeyboardConfigurationDiv">
+          <div id="KeyboardContainerDiv">
+            <h1 id="KeyboardNumber">Keyboard One</h1><br>
+            <div id="KeyboardRowOne" class="KeyboardRow">
+              <button class="KeyConfigButton" id="Escape">Esc</button>
+              <button class="KeyConfigButton" id="F1">F1</button>
+              <button class="KeyConfigButton" id="F2">F2</button>
+              <button class="KeyConfigButton" id="F3">F3</button>
+              <button class="KeyConfigButton" id="F4">F4</button>
+              <button class="KeyConfigButton" id="F5">F5</button>
+              <button class="KeyConfigButton" id="F6">F6</button>
+              <button class="KeyConfigButton" id="F7">F7</button>
+              <button class="KeyConfigButton" id="F8">F8</button>
+              <button class="KeyConfigButton" id="F9">F9</button>
+              <button class="KeyConfigButton" id="F10">F10</button>
+              <button class="KeyConfigButton" id="F11">F11</button>
+              <button class="KeyConfigButton" id="F12">F12</button>
+              <button class="KeyConfigButton" id="Power">Power</button>
+              <button class="KeyConfigButton" id="Sleep">Sleep</button>
+              <button class="KeyConfigButton" id="WakeUp">Wake Up</button>
+            </div>
+            <div id="KeyboardRowTwo" class="KeyboardRow">
+              <button class="KeyConfigButton" id="Tilde">`</button>
+              <button class="KeyConfigButton" id="1">1</button>
+              <button class="KeyConfigButton" id="2">2</button>
+              <button class="KeyConfigButton" id="3">3</button>
+              <button class="KeyConfigButton" id="4">4</button>
+              <button class="KeyConfigButton" id="5">5</button>
+              <button class="KeyConfigButton" id="6">6</button>
+              <button class="KeyConfigButton" id="7">7</button>
+              <button class="KeyConfigButton" id="8">8</button>
+              <button class="KeyConfigButton" id="9">9</button>
+              <button class="KeyConfigButton" id="0">0</button>
+              <button class="KeyConfigButton" id="Dash">-</button>
+              <button class="KeyConfigButton" id="Equal">=</button>
+              <button class="KeyConfigButton" id="Backspace">Backspace</button>
+              <button class="KeyConfigButton" id="Printscreen">Prnt Scrn</button>
+              <button class="KeyConfigButton" id="ScrollLock">Scrl Lck</button>
+              <button class="KeyConfigButton" id="PauseBreak">Pause Brk</button>
+              <button class="KeyConfigButton" id="Numlock">Num Lck</button>
+              <button class="KeyConfigButton" id="NumpadSlash">/</button>
+              <button class="KeyConfigButton" id="NumpadAsterisk">*</button>
+              <button class="KeyConfigButton" id="NumpadDash">-</button>
+            </div>
+            <div id="KeyboardRowThree" class="KeyboardRow">
+              <button class="KeyConfigButton" id="Tab">Tab</button>
+              <button class="KeyConfigButton" id="Q">Q</button>
+              <button class="KeyConfigButton" id="W">W</button>
+              <button class="KeyConfigButton" id="E">E</button>
+              <button class="KeyConfigButton" id="R">R</button>
+              <button class="KeyConfigButton" id="T">T</button>
+              <button class="KeyConfigButton" id="Y">Y</button>
+              <button class="KeyConfigButton" id="U">U</button>
+              <button class="KeyConfigButton" id="I">I</button>
+              <button class="KeyConfigButton" id="O">O</button>
+              <button class="KeyConfigButton" id="P">P</button>
+              <button class="KeyConfigButton" id="LeftBracket">[</button>
+              <button class="KeyConfigButton" id="RightBracket">]</button>
+              <button class="KeyConfigButton" id="LeftEnter">Enter</button>
+              <button class="KeyConfigButton" id="RightEnter">Enter</button>
+              <button class="KeyConfigButton" id="Insert">Insrt</button>
+              <button class="KeyConfigButton" id="Home">Home</button>
+              <button class="KeyConfigButton" id="PageUp">Pg Up</button>
+              <button class="KeyConfigButton" id="Numpad7">7</button>
+              <button class="KeyConfigButton" id="Numpad8">8</button>
+              <button class="KeyConfigButton" id="Numpad9">9</button>
+              <button class="KeyConfigButton" id="NumpadPlusTop">+</button>
+            </div>
+            <div id="KeyboardRowFour" class="KeyboardRow">
+              <button class="KeyConfigButton" id="CapsLock">CapsLock</button>
+              <button class="KeyConfigButton" id="A">A</button>
+              <button class="KeyConfigButton" id="S">S</button>
+              <button class="KeyConfigButton" id="D">D</button>
+              <button class="KeyConfigButton" id="F">F</button>
+              <button class="KeyConfigButton" id="G">G</button>
+              <button class="KeyConfigButton" id="H">H</button>
+              <button class="KeyConfigButton" id="J">J</button>
+              <button class="KeyConfigButton" id="K">K</button>
+              <button class="KeyConfigButton" id="L">L</button>
+              <button class="KeyConfigButton" id="Semicolon">;</button>
+              <button class="KeyConfigButton" id="Apostrophe">'</button>
+              <button class="KeyConfigButton" id="Backslash">\</button>
+              <button class="KeyConfigButton" id="BottomEnter">Enter</button>
+              <button class="KeyConfigButton" id="Delete">Del</button>
+              <button class="KeyConfigButton" id="End">End</button>
+              <button class="KeyConfigButton" id="PageDown">Pg Dwn</button>
+              <button class="KeyConfigButton" id="Numpad4">4</button>
+              <button class="KeyConfigButton" id="Numpad5">5</button>
+              <button class="KeyConfigButton" id="Numpad6">6</button>
+              <button class="KeyConfigButton" id="NumpadPlusBottom">+</button>
+            </div>
+            <div id="KeyboardRowFive" class="KeyboardRow">
+              <button class="KeyConfigButton" id="LeftShift">Shift</button>
+              <button class="KeyConfigButton" id="Z">Z</button>
+              <button class="KeyConfigButton" id="X">X</button>
+              <button class="KeyConfigButton" id="C">C</button>
+              <button class="KeyConfigButton" id="V">V</button>
+              <button class="KeyConfigButton" id="B">B</button>
+              <button class="KeyConfigButton" id="N">N</button>
+              <button class="KeyConfigButton" id="M">M</button>
+              <button class="KeyConfigButton" id="Comma">,</button>
+              <button class="KeyConfigButton" id="Period">.</button>
+              <button class="KeyConfigButton" id="Slash">/</button>
+              <button class="KeyConfigButton" id="RightShift">Shift</button>
+              <button class="KeyConfigButton" id="Up">↑</button>
+              <button class="KeyConfigButton" id="Numpad1">1</button>
+              <button class="KeyConfigButton" id="Numpad2">2</button>
+              <button class="KeyConfigButton" id="Numpad3">3</button>
+              <button class="KeyConfigButton" id="NumpadEnterTop">Enter</button>
+            </div>
+            <div id="KeyboardRowSix" class="KeyboardRow">
+              <button class="KeyConfigButton" id="LeftCtrl">Ctrl</button>
+              <button class="KeyConfigButton" id="LeftWin">Win</button>
+              <button class="KeyConfigButton" id="LeftAlt">Alt</button>
+              <button class="KeyConfigButton" id="Space">Space</button>
+              <button class="KeyConfigButton" id="RightAlt">Alt</button>
+              <button class="KeyConfigButton" id="RightWin">Win</button>
+              <button class="KeyConfigButton" id="Menu">Menu</button>
+              <button class="KeyConfigButton" id="RightCtrl">Ctrl</button>
+              <button class="KeyConfigButton" id="Left">←</button>
+              <button class="KeyConfigButton" id="Down">↓</button>
+              <button class="KeyConfigButton" id="Right">→</button>
+              <button class="KeyConfigButton" id="Numpad0">0</button>
+              <button class="KeyConfigButton" id="NumpadPeriod">.</button>
+              <button class="KeyConfigButton" id="NumpadEnterBottom">Enter</button>
+            </div>
+          </div>
+        </div>
+        <!--end of keyboard section-->
+      </div>
+      <div id="floatingRoutingDiv" class="floatingDiv">
+        <div class="columnDirectionBorder">
+          <h1>Routing Table</h1>
+          <table>
+            <tr>
+              <th colspan="10"><h2>Inputs</h2></th>
+            </tr>
+            <tr>
+              <th rowspan="5"><h2 id="outputs">Outputs</h2></th>
+              <th></th>
+              <th><h3>Mic</h3></th>
+              <th><h3>Comms</h3></th>
+              <th><h3>Music</h3></th>
+              <th><h3>Game</h3></th>
+              <th><h3>Console</h3></th>
+              <th><h3>Line In</h3></th>
+              <th><h3>System</h3></th>
+              <th><h3>SFX</h3></th>
+            </tr>
+            <tr>
+              <th><h3>Headphones</h3></th>
+              <td><input type="checkbox" id="MicToHeadphones" class="router"></td>
+              <td><input type="checkbox" id="CommsToHeadphones" class="router"></td>
+              <td><input type="checkbox" id="MusicToHeadphones" class="router"></td>
+              <td><input type="checkbox" id="GameToHeadphones" class="router"></td>
+              <td><input type="checkbox" id="ConsoleToHeadphones" class="router"></td>
+              <td><input type="checkbox" id="LineInToHeadphones" class="router"></td>
+              <td><input type="checkbox" id="SystemToHeadphones" class="router"></td>
+              <td><input type="checkbox" id="SoundboardToHeadphones" class="router"></td>
+            </tr>
+            <tr>
+              <th><h3>Stream</h3></th>
+              <td><input type="checkbox" id="MicToStream" class="router"></td>
+              <td><input type="checkbox" id="CommsToStream" class="router"></td>
+              <td><input type="checkbox" id="MusicToStream" class="router"></td>
+              <td><input type="checkbox" id="GameToStream" class="router"></td>
+              <td><input type="checkbox" id="ConsoleToStream" class="router"></td>
+              <td><input type="checkbox" id="LineInToStream" class="router"></td>
+              <td><input type="checkbox" id="SystemToStream" class="router"></td>
+              <td><input type="checkbox" id="SfxToStream" class="router"></td>
+            </tr>
+            <tr>
+              <th><h3>Line Out</h3></th>
+              <td><input type="checkbox" id="MicToLineOut" class="router"></td>
+              <td><input type="checkbox" id="CommsToLineOut" class="router"></td>
+              <td><input type="checkbox" id="MusicToLineOut" class="router"></td>
+              <td><input type="checkbox" id="GameToLineOut" class="router"></td>
+              <td><input type="checkbox" id="ConsoleToLineOut" class="router"></td>
+              <td><input type="checkbox" id="LineInToLineOut" class="router"></td>
+              <td><input type="checkbox" id="SystemToLineOut" class="router"></td>
+              <td><input type="checkbox" id="SfxToLineOut" class="router"></td>
+            </tr>
+            <tr>
+              <th><h3>Comms</h3></th>
+              <td><input type="checkbox" id="MicToComms" class="router"></td>
+              <td><input type="checkbox" id="CommsToComms" class="router"></td>
+              <td><input type="checkbox" id="MusicToComms" class="router"></td>
+              <td><input type="checkbox" id="GameToComms" class="router"></td>
+              <td><input type="checkbox" id="ConsoleToComms" class="router"></td>
+              <td><input type="checkbox" id="LineInToComms" class="router"></td>
+              <td><input type="checkbox" id="SystemToComms" class="router"></td>
+              <td><input type="checkbox" id="SfxToComms" class="router"></td>
+            </tr>
+          </table>
+        </div>
+      </div>
+      <div id="floatingLightingDiv" class="floatingDiv">
+        <!--lighting settings-->
+        <h1>Lighting Settings</h1>
+      </div>
+      <div id="floatingSettingsDiv" class="floatingDiv">
+        <!--settings settings-->
+        <h1>Settings Settings</h1>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+  function updateSliderLevel(sliderId, sliderValue) {
+    console.log('SliderId: ' + sliderId + ' SliderValue: ' + sliderValue);
+    document.getElementById(sliderId).innerText = sliderValue;
+  }
+
+  function showDivById(divId, className) {
+      // Hide all elements with the specified class
+      const elementsToHide = document.querySelectorAll(`.${className}`);
+      elementsToHide.forEach(element => {
+        element.style.display = 'none';
+      });
+
+      // Show the specific div by its ID
+      const targetDiv = document.getElementById(divId);
+      if (targetDiv) {
+        targetDiv.style.display = 'flex';
+      }
+  }
+
+  function saveChanges() {
+    const sliderCount = document.getElementById('sliderCountElement').value;
+    const keyboardCount = document.getElementById('keyboardCountElement').value;
+    const oledType = document.getElementById('oledType').value;
+    console.log(`Slider count: ${sliderCount}`);
+    console.log(`Keyboard count: ${keyboardCount}`);
+    console.log(`OLED type: ${oledType}`);
+    document.getElementById('settingsDialog').close();
+  }
+
+  function populateKbDiv(KbNumber) {
+    document.getElementById('KeyboardNumber').innerText = `${KbNumber}`;
+  }
+
+  const buttons = document.querySelectorAll('.KeyConfigButton');
+  const form = document.getElementById('KeyConfigFormInner');
+  buttons.forEach(button => {
+  button.addEventListener('click', () => {
+    document.getElementById('KeyConfigForm').showModal();
+  });
+});
+
+function repopulateFormContent (mode) {
+  console.log('repopulateFormContent called'); // debug statement
+ switch(mode) {
+  case 'radio':
+    document.getElementById('KeyFunctionSelectorDiv').innerHTML = `
+      <label for="macro-name">Macro Name:</label><br>
+      <input type="text" id="macro-name" name="macro-name" required><br>
+      <label for="key-combination">Key Combination:</label><br>
+      <textarea cols="30" rows="5" id="keyCombinationTextarea"></textarea><br>
+      <button type="button" id="clear" class="config" onclick="clearKeyCombination()">Clear</button>
+    `;
+    break;
+  case 'soundboard':
+    document.getElementById('KeyFunctionSelectorDiv').innerHTML = `
+      <label for="sound">Sound:</label>
+      <input type="file" accept=".wav" id="sound" name="sound" required>
+    `;
+    break;
+ }
+}
+
+function clearKeyCombination() {
+  document.getElementById('keyCombinationTextarea').value = '';
+}
+
+function regenerateFormContent(ConfigButtonId) {
+  const formContentDiv = document.getElementById('form-content');
+  formContentDiv.innerHTML = '';
+  const mode = document.querySelector('input[name="ButtonMode"]:checked').value;
+  let formContent;
+
+  formContentDiv.innerHTML = formContent;
+
+  // Add event listener after HTML has been updated
+  const clearButton = document.getElementById('clear');
+  const keyCombinationTextarea = document.getElementById('key-combination');
+  if (clearButton) {
+    clearButton.addEventListener('click', function(e) {
+      keyCombinationTextarea.value = ''; // clear the textarea
+    });
+    keyCombinationTextarea.readOnly = true; // make the textarea read-only
+  }
+  if (mode === 'Soundboard') {
+    document.getElementById('sound').addEventListener('change', function(e) {
+      const file = this.files[0];
+      const maxSize = 1024 * 1024 * 3; // 3MB max of 428 keys so absolute maximum of 1.284GB of sound effects
+      if (file.size > maxSize){
+        alert("File is too large ! Please select a file less than 3MB in size.");
+        this.value = "";
+      }
+    });
+  }
+}
+
+let keys = new Set();
+let releasedKeys = new Set();
+document.addEventListener('keydown', function(e) {
+  if (document.activeElement === keyCombinationTextarea) {
+    e.preventDefault(); // prevent the default behavior of keys
+    if (releasedKeys.has(e.code)) {
+      releasedKeys.clear(); // clear the set of released keys if the key is in the set
+    }
+    if (!keys.has(e.code)) {
+      if (keys.size > 0) {
+        keyCombinationTextarea.value += ' + ';
+      }
+      keys.add(e.code);
+      keyCombinationTextarea.value += e.code;
+    }
+  }
+});
+
+document.addEventListener('keyup', function(e) {
+  if (document.activeElement === keyCombinationTextarea) {
+    releasedKeys.add(e.code);
+    if (keys.size === releasedKeys.size && [...keys].every(key => releasedKeys.has(key))) {
+      keyCombinationTextarea.value += '\n'; // add a new line to the textarea
+      keys.clear(); // clear the set of pressed keys
+      releasedKeys.clear(); // clear the set of released keys
+      keyCombinationTextarea.scrollTop = keyCombinationTextarea.scrollHeight; // scroll down
+    }
+  }
+});
+
+function selectKeyboard(keyboardId) {
+    // Reset all buttons
+    const buttons = document.querySelectorAll('.horiTab');
+    buttons.forEach(button => {
+      button.classList.remove('active');
+    });
+
+    // Set the clicked button as active
+    const selectedButton = document.getElementById(keyboardId);
+    selectedButton.classList.add('active');
+
+    // Change the content of KeyboardContainerDiv based on the selected button
+    const container = document.getElementById('KeyboardContainerDiv');
+    switch (keyboardId) {
+      case 'KeyboardOne':
+        container.innerHTML = '<p>Configuration for Keyboard One</p>';
+        break;
+      case 'KeyboardTwo':
+        container.innerHTML = '<p>Configuration for Keyboard Two</p>';
+        break;
+      case 'KeyboardThree':
+        container.innerHTML = '<p>Configuration for Keyboard Three</p>';
+        break;
+      case 'KeyboardFour':
+        container.innerHTML = '<p>Configuration for Keyboard Four</p>';
+        break;
+      default:
+        container.innerHTML = '';
+    }
+}
+</script>
+</body>
+</html>
