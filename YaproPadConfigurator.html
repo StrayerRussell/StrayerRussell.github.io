@@ -3,31 +3,44 @@
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <style>
+  :root {
+    --background-dark: #6205ba;
+    --background-light: #6250ba;
+    --accent-color: #ffda7e;
+    --border-color: #ffda7e;
+    --unchecked: white;
+    --mute: red;
+    --router: lightgreen;
+  }
   body {
     font-family: system-ui;
     margin: 0;
     padding: 0;
     min-width: 0;
     min-height: 0;
-    color: rgb(255, 218, 126);
-    background-color: rgb(98, 80, 186);
+    color: var(--accent-color);
+    background-color: var(--background-light);
     height: 100vh;
   }
   #mainBodyDiv {
-    display: flex;
-    width: 100%;
-    height: 100%;
-    flex-direction: column;
+    display:flex;
+    width:100%;
+    height:100%;
+    flex-direction:column;
   }
-  #topSectionDiv, #bottomSectionDiv {
-    display: flex;
-    flex-direction: row;
+
+  #bottomSectionDiv, #topSectionDiv {
+    display:flex;
+    max-width: 100%;
+  }
+  #wideSliderConfigurationDiv {
+  width: min-content;
   }
   #topSectionDiv {
-    background-color: rgb(98, 5, 186);
+    background-color: var(--background-dark);
   }
   #bottomSectionDiv {
-    border: 2px solid rgb(255, 218, 126);
+    border: 2px solid var(--border-color);
     border-top: none;
     flex-grow: 1;
   }
@@ -36,7 +49,7 @@
     height: 5%;
     flex-direction: row;
     justify-content: center;
-    background-Color: rgb(98, 5, 186);
+    background-Color: var(--background-dark);
   }
   #bottomIslandDiv {
     display: flex;
@@ -46,37 +59,44 @@
     max-width: 95%;
     min-height: 90%;
     margin: 2.5%;
-    background-color: rgb(98, 5, 186);
-    border: 2px solid rgb(255, 218, 126);
+    background-color: var(--background-dark);
+    border: 2px solid var(--border-color);
     border-radius: 30px;
   }
-  #sidebarDiv, #sliderConfigurationDiv, #KeyboardConfigurationDiv, #keyboardSelectorDiv {
-    display: flex;
-    min-width: min-content;
-    flex-direction: column;
-    overflow-y: auto;
-    background-color: rgb(98, 5, 186);
-    color: rgb(255, 218, 126);
+  #sidebarDiv,#sliderConfigurationDiv,#KeyboardConfigurationDiv,#keyboardSelectorDiv {
+    display:flex;
+    flex-direction:column;
+    overflow-y:auto;
+    background-color: var(--background-dark);
+    color: var(--accent-color);
   }
   #sliderConfigurationDiv {
-    flex-direction: row;
-    min-width: min-content;
-    width: 95%;
-    background-color: rgb(98, 80, 186);
-    border-radius: 0px 0px 0px 30px;
-    border-bottom: solid 2px rgb(255, 218, 126);
-    border-left: solid 2px rgb(255, 218, 126);
+    flex-direction:row;
+    width:95%;
+    border-radius:0 0 0 30px;
+    border-bottom:solid 2px;
+    border-left:solid 2px;
+    background-color: var(--background-light);
+    border-bottom: solid 2px var(--border-color);
+    border-left: solid 2px var(--border-color);
 
+  }
+  #sliderConfigurationMarginDiv {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: auto;
+    margin-left: 2.5%;
+    scrollbar-width: thin;
   }
   #KeyboardConfigurationDiv  {
     width: 100%;
-    background-color: rgb(98, 80, 186);
+    background-color: var(--background-light);
     border-radius: 0px 30px 30px 0px;
-    border: solid 2px rgb(255, 218, 126);
+    border: solid 2px var(--border-color);
     border-left: none;
   }
   #settingsDialog {
-    background-color: rgb(98, 5, 186);
+    background-color: var(--background-dark);
     border-radius: 30px;
     padding: 20px;
   }
@@ -162,6 +182,13 @@
   #KeyboardNumber {
     margin-bottom: 2.5%;
   }
+  #keyboardSectionHeaderDiv {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    width: 100%;
+    height: 20%;
+  }
   #KeyboardContainerDiv {
     display: flex;
     flex-direction: column;
@@ -173,7 +200,7 @@
   }
   #outputs {
     writing-mode: vertical-rl;
-    color:rgb(255, 218, 126);
+    color:var(--accent-color);
     transform: rotate(180deg);
     margin: 0px 20px 0px 0px;
   }
@@ -192,8 +219,8 @@
     min-height: 70%;
     display: flex;
     flex-direction: column;
-    background-color: rgb(98, 80, 186);
-    border: 2px solid rgb(255, 218, 126);
+    background-color: var(--background-light);
+    border: 2px solid var(--border-color);
     border-top: none;
     border-radius: 0px 0px 30px 30px;
   }
@@ -202,9 +229,9 @@
     width: auto;
     height: min-content;
     margin: 2.5% 10% 2.5% 10%;
-    color: rgb(255, 218, 126);
-    border-color: rgb(255, 218, 126);
-    background-color: rgb(98, 80, 186);
+    color: var(--accent-color);
+    border-color: var(--border-color);
+    background-color: var(--background-light);
     border-radius: 10px;
     font-size: 20px;
   }
@@ -213,7 +240,7 @@
   }
   .configDark {
     text-wrap: nowrap;
-    background-color: rgb(98, 5, 186);
+    background-color: var(--background-dark);
   }
   .exitButton {
     margin: 0%;
@@ -229,23 +256,23 @@
     justify-content: center;
     align-items: center;
     padding: 5%;
-    background-color: rgb(98, 80, 186);
-    border: 2px solid rgb(255, 218, 126);
+    background-color: var(--background-light);
+    border: 2px solid var(--border-color);
     border-radius: 30px;
   }
   .HrDiv {
     width: 100%;
     height: 15px;
-    background-color: rgb(98, 5, 186);
+    background-color: var(--background-dark);
     margin: 0px;
   }
   .horiTab, .vertTab, .radioButton {
     display: flex;
     appearance: none;
     flex-grow: 1;
-    background-color: rgb(98, 5, 186);
-    border-color: rgb(255, 218, 126);
-    color: rgb(255, 218, 126);
+    background-color: var(--background-dark);
+    border-color: var(--border-color);
+    color: var(--accent-color);
     cursor: pointer;
     font-size: 30px;
     margin: 0px;
@@ -256,14 +283,14 @@
   }
   .horiTab {
     border-radius: 30px 0px 0px 30px;
-    border-right: 2px solid rgb(255, 218, 126);
+    border-right: 2px solid var(--border-color);
   }
   .vertTab {
     border-radius: 30px 30px 0px 0px;
-    border-bottom: 2px solid rgb(255, 218, 126);
+    border-bottom: 2px solid var(--border-color);
   }
   .radioButton {
-    border: 2px solid rgb(255, 218, 126);
+    border: 2px solid var(--border-color);
     border-radius: 30px;
     margin: 5px 10px;
     font-size: 20px;
@@ -273,17 +300,17 @@
     position: relative;
   }
   .horiTab:checked {
-    background-color: rgb(98, 80, 186);
-    border: 2px solid rgb(255, 218, 126);
+    background-color: var(--background-light);
+    border: 2px solid var(--border-color);
     border-right: none;
   }
   .vertTab:checked {
-    background-color: rgb(98, 80, 186);
-    border: 2px solid rgb(255, 218, 126);
+    background-color: var(--background-light);
+    border: 2px solid var(--border-color);
     border-bottom: none;
   }
   .radioButton:checked {
-    border: 6px solid rgb(255, 218, 126);
+    border: 6px solid var(--border-color);
   }
   .sliderContainerDiv {
     display: flex;
@@ -298,6 +325,7 @@
     margin: 2%;
     overflow-y: auto;
     overflow-x: auto;
+    scrollbar-width: thin;
   }
   .sliderIconCanvas {
     margin: 10px;
@@ -316,16 +344,16 @@
     margin: 5px 0px 0px 0px;
   }
   .mute:checked {
-    background-color: red;
+    background-color: var(--mute);
   }
   .router:checked {
-    background-color: lightgreen;
+    background-color: var(--router);
   }
   .slider {
     width: 100%;
     background-color: black;
     color: black;
-    accent-color: rgb(255, 218, 126);
+    accent-color: var(--accent-color);
     writing-mode: vertical-lr;
     direction: rtl;
     width: 16px;
@@ -337,15 +365,15 @@
     width: 100%;
     background-color: black;
     color: black;
-    accent-color: rgb(255, 218, 126);
+    accent-color: var(--accent-color);
   }
   .KeyConfigButton {
     appearance: none;
     width: 4.33%;
     height: 100%;
-    background-color: rgb(98, 5, 186);
-    color: rgb(255, 218, 126);
-    border-color:rgb(255, 218, 126);
+    background-color: var(--background-dark);
+    color: var(--accent-color);
+    border-color:var(--border-color);
     border-radius: 10px 10px 10px 10px;
     cursor: pointer;
     font-size: 15px;
@@ -369,23 +397,23 @@
     flex-grow: 1;
     padding: 5%;
     border-radius: 30px;
-    border: 2px solid rgb(255, 218, 126);
-    background-color:rgb(98, 5, 186);
+    border: 2px solid var(--border-color);
+    background-color:var(--background-dark);
   }
   .columnDirection, .columnDirectionBorder, .columnDirectionBorderDark {
     display: flex;
     flex-grow: 1;
     flex-direction: column;
-    background-color:rgb(98, 80, 186);
+    background-color:var(--background-light);
     border-radius: 30px;
     margin: 0% 1% 0% 1%;
   }
   .columnDirectionBorder, .columnDirectionBorderDark {
     width: min-content;
-    border: 2px solid rgb(255, 218, 126);
+    border: 2px solid var(--border-color);
   }
   .columnDirectionBorderDark {
-    background-color:rgb(98, 5, 186);
+    background-color:var(--background-dark);
   }
   .expandCollapseButton {
     height: 95%;
@@ -416,7 +444,7 @@
     margin: 0px 30px;
     text-align: center;
     text-wrap: nowrap;
-    color: rgb(255, 218, 126);
+    color: var(--accent-color);
   }
   h1, h2 {
     margin: 0 30px 10px 30px;
@@ -437,7 +465,7 @@
     z-index: 1000;
     padding: 20px;
     border-radius: 10px;
-    background-color: rgb(98, 5, 186);
+    background-color: var(--background-dark);
     width: 80%;
     height: 80%;
     max-height: 80%;
@@ -445,23 +473,23 @@
     border-radius: 30px;
   }
   input, textarea, select {
-    background-color: rgb(98, 5, 186);
-    border-color: rgb(255, 218, 126);
-    color: rgb(255, 218, 126);
+    background-color: var(--background-dark);
+    border-color: var(--border-color);
+    color: var(--accent-color);
     border-radius: 30px;
     margin: 10px;
     font-size: 30px;
   }
   input[type=file] {
-    background-color: rgb(98, 5, 186);
-    border-color: rgb(255, 218, 126);
-    color: rgb(255, 218, 126);
+    background-color: var(--background-dark);
+    border-color: var(--border-color);
+    color: var(--accent-color);
     border-radius: 30px;
     margin: 10px;
     font-size: 30px;
   }
   table, td {
-    border: 2px solid rgb(255, 218, 126);
+    border: 2px solid var(--border-color);
     margin: 0px;
     padding: 0px;
     border-collapse: collapse;
@@ -567,6 +595,39 @@
         </div>
       </div>
     </dialog>
+    <dialog id="sliderConfigForm" class="config">
+      <button onclick="document.getElementById('sliderConfigForm').close();" class="exitButton">x</button>
+      <div id="sliderConfigFormInner" class="modalContent">
+        <h2>Slider Div Config</h2>
+        <canvas id="sliderCanvas" style="background-color: black; width: 50%; height: 200px;"></canvas>
+        <label for="sliderIconSelector">Slider Icon</label>
+        <input type="file" id="sliderIconSelector" class="fileSelector">
+      
+        <label for="modeSelector">Select Mode:</label>
+        <select id="modeSelector" onchange="showDivById(this.value, 'modeDiv')">
+          <option value="deejModeDiv">Deej Mode</option>
+          <option value="hardwareModeDiv">Hardware Mode</option>
+          <option value="inputModeDiv">Input Mode</option>
+        </select>
+      
+        <div id="deejModeDiv" class="modeDiv columnDirection">
+          <h3>Deej Mode</h3>
+          <label for="programNameInput">Program Name</label>
+          <input type="text" id="programNameInput" placeholder="example.exe">
+        </div>
+      
+        <div id="hardwareModeDiv" class="modeDiv columnDirection" style="display: none;">
+          <h3>Hardware Mode</h3>
+          <!-- Additional content for Hardware Mode can go here -->
+        </div>
+      
+        <div id="inputModeDiv" class="modeDiv columnDirection" style="display: none;">
+          <h3>Input Mode</h3>
+          <!-- Additional content for Input Mode can go here -->
+        </div>
+        <button id="saveSliderConfig" class="configDark">Save Configuration</button>
+      </div>
+    </dialog>
   </div>  
   <div id="topSectionDiv">
     <div id="sidebarDiv">
@@ -576,60 +637,78 @@
       <button id="downloadConfigFile" class="config">Download Configuration File</button>
       <button id="InstructionsButton" class="config" onclick="document.getElementById('InstructionsDialog').show();">Help/Instructions</button>
     </div>
-    <div id="sliderConfigurationDiv">
-      <div class="sliderContainerDiv">
-        <h3>Channel 1</h3>
-        <canvas id="sliderOneCanvas" class="sliderIconCanvas"></canvas>
-        <input type="range" min="0" max="255" value="50" class="slider" id="sliderOne" orient="vertical">
-        <input type="checkbox" id="sliderOneMute" class="mute">
-        <h2>Mute</h2>
-      </div>
-      <div class="sliderContainerDiv">
-        <h3>Channel 2</h3>
-        <canvas id="sliderTwoCanvas" class="sliderIconCanvas"></canvas>
-        <input type="range" min="0" max="255" value="50" class="slider" id="sliderTwo" orient="vertical">
-        <input type="checkbox" id="sliderTwoMute" class="mute">
-        <h2>Mute</h2>
-      </div>
-      <div class="sliderContainerDiv">
-        <h3>Channel 3</h3>
-        <canvas id="sliderThreeCanvas" class="sliderIconCanvas"></canvas>
-        <input type="range" min="0" max="255" value="50" class="slider" id="sliderThree" orient="vertical">
-        <input type="checkbox" id="sliderThreeMute" class="mute">
-        <h2>Mute</h2>
-      </div>
-      <div class="sliderContainerDiv">
-        <h3>Channel 4</h3>
-        <canvas id="sliderFourCanvas" class="sliderIconCanvas"></canvas>
-        <input type="range" min="0" max="255" value="50" class="slider" id="sliderFour" orient="vertical">
-        <input type="checkbox" id="sliderFourMute" class="mute">
-        <h2>Mute</h2>
-      </div>
-      <div class="sliderContainerDiv">
-        <h3>Channel 5</h3>
-        <canvas id="sliderFiveCanvas" class="sliderIconCanvas"></canvas>
-        <input type="range" min="0" max="255" value="50" class="slider" id="sliderFive" orient="vertical">
-        <input type="checkbox" id="sliderFiveMute" class="mute">
-        <h2>Mute</h2>
-      </div>
-      <div class="sliderContainerDiv">
-        <h3>Channel 6</h3>
-        <canvas id="sliderSixCanvas" class="sliderIconCanvas"></canvas>
-        <input type="range" min="0" max="255" value="50" class="slider" id="sliderSix" orient="vertical">
-        <input type="checkbox" id="sliderSixMute" class="mute">
-        <h2>Mute</h2>
+    <div id="sliderConfigurationDiv" class="backgroundLight accentColor borderColor">
+      <div id="sliderConfigurationMarginDiv">
+        <div id="wideSliderConfigurationDiv" class="rowDirection">
+          <div id="channelOneSliderDiv" class="sliderContainerDiv">
+            <h3 id="channelOneTitle">Channel 1</h3>
+            <canvas id="channelOneCanvas" class="sliderIconCanvas"></canvas>
+            <input type="range" min="0" max="255" value="50" id="channelOneSlider" class="slider" orient="vertical">
+            <input type="checkbox" id="channelOneMute" class="mute backgroundDark accentColor borderColor">
+            <h2>Mute</h2>
+          </div>
+          <div id="channelTwoSliderDiv" class="sliderContainerDiv">
+            <h3 id="channelTwoTitle">Channel 2</h3>
+            <canvas id="channelTwoCanvas" class="sliderIconCanvas"></canvas>
+            <input type="range" min="0" max="255" value="50" id="channelTwoSlider" class="slider" orient="vertical">
+            <input type="checkbox" id="channelTwoMute" class="mute backgroundDark accentColor borderColor">
+            <h2>Mute</h2>
+          </div>
+          <div id="channelThreeSliderDiv" class="sliderContainerDiv">
+            <h3 id="channelThreeTitle">Channel 3</h3>
+            <canvas id="channelThreeCanvas" class="sliderIconCanvas"></canvas>
+            <input type="range" min="0" max="255" value="50" id="channelThreeSlider" class="slider" orient="vertical">
+            <input type="checkbox" id="channelThreeMute" class="mute backgroundDark accentColor borderColor">
+            <h2>Mute</h2>
+          </div>
+          <div id="channelFourSliderDiv" class="sliderContainerDiv">
+            <h3 id="channelFourTitle">Channel 4</h3>
+            <canvas id="channelFourCanvas" class="sliderIconCanvas"></canvas>
+            <input type="range" min="0" max="255" value="50" id="channelFourSlider" class="slider" orient="vertical">
+            <input type="checkbox" id="channelFourMute" class="mute backgroundDark accentColor borderColor">
+            <h2>Mute</h2>
+          </div>
+          <div id="channelFiveSliderDiv" class="sliderContainerDiv">
+            <h3 id="channelFiveTitle">Channel 5</h3>
+            <canvas id="channelFiveCanvas" class="sliderIconCanvas"></canvas>
+            <input type="range" min="0" max="255" value="50" id="channelFiveSlider" class="slider" orient="vertical">
+            <input type="checkbox" id="channelFiveMute" class="mute backgroundDark accentColor borderColor">
+            <h2>Mute</h2>
+          </div>
+          <div id="channelSixSliderDiv" class="sliderContainerDiv">
+            <h3 id="channelSixTitle">Channel 6</h3>
+            <canvas id="channelSixCanvas" class="sliderIconCanvas"></canvas>
+            <input type="range" min="0" max="255" value="50" id="channelSixSlider" class="slider" orient="vertical">
+            <input type="checkbox" id="channelSixMute" class="mute backgroundDark accentColor borderColor">
+            <h2>Mute</h2>
+          </div>
+          <div id="channelSevenSliderDiv" class="sliderContainerDiv">
+            <h3 id="channelSevenTitle">Channel 7</h3>
+            <canvas id="channelSevenCanvas" class="sliderIconCanvas"></canvas>
+            <input type="range" min="0" max="255" value="50" id="channelSevenSlider" class="slider" orient="vertical">
+            <input type="checkbox" id="channelSevenMute" class="mute backgroundDark accentColor borderColor">
+            <h2>Mute</h2>
+          </div>
+          <div id="channelEightSliderDiv" class="sliderContainerDiv">
+            <h3 id="channelEightTitle">Channel 8</h3>
+            <canvas id="channelEightCanvas" class="sliderIconCanvas"></canvas>
+            <input type="range" min="0" max="255" value="50" id="channelEightSlider" class="slider" orient="vertical">
+            <input type="checkbox" id="channelEightMute" class="mute backgroundDark accentColor borderColor">
+            <h2>Mute</h2>
+          </div>
+        </div>
       </div>
     </div>
   </div>
   <div class="HrDiv"></div>
   <div id="menuBarDiv">
-    <!--mic, levels, sliders, keyboard, routing, lighting, settings-->
+    <!--mic, levels, sliders, keyboard, routing, color, settings-->
     <input type="radio" id="micConfig" class="vertTab" name="menu" value="Mic" onclick="showDivById('floatingMicDiv', 'floatingDiv')" checked>
     <input type="radio" id="levelsConfig" class="vertTab" name="menu" value="Levels" onclick="showDivById('floatingLevelsDiv', 'floatingDiv')">
     <input type="radio" id="slidersConfig" class="vertTab" name="menu" value="Sliders" onclick="showDivById('floatingSlidersDiv', 'floatingDiv')">
     <input type="radio" id="keyboardConfig" class="vertTab" name="menu" value="Keyboard" onclick="showDivById('floatingKeyboardDiv', 'floatingDiv')">
     <input type="radio" id="routingConfig" class="vertTab" name="menu" value="Routing" onclick="showDivById('floatingRoutingDiv', 'floatingDiv')">
-    <input type="radio" id="lightingConfig" class="vertTab" name="menu" value="Lighting" onclick="showDivById('floatingLightingDiv', 'floatingDiv')">
+    <input type="radio" id="colorConfig" class="vertTab" name="menu" value="Color" onclick="showDivById('floatingColorDiv', 'floatingDiv')">
     <input type="radio" id="settingsConfig" class="vertTab" name="menu" value="Settings" onclick="showDivById('floatingSettingsDiv', 'floatingDiv')">
   </div>
   <div id="bottomSectionDiv">
@@ -1115,7 +1194,13 @@
       </div>
       <div id="floatingSlidersDiv" class="floatingDiv">
         <!--sliders settings-->
-        <h2>Sliders Settings</h2>
+        <div id="slidersSettingsWideBody" class="rowDirection">
+          <div id="sliderModalDiv" class="columnDirectionBorder expandingHoriDiv">
+            <h2>Show Slider Modal</h2>
+            <h2>Mic Setup</h2>
+            <button id="micSetupButton" class="configDark" onclick="document.getElementById('sliderConfigForm').show();">Slider Setup</button>
+          </div>
+        </div>
       </div>
       <div id="floatingKeyboardDiv" class="floatingDiv">
         <!--start of keyboard section-->
@@ -1127,7 +1212,12 @@
         </div>
         <div id="KeyboardConfigurationDiv">
           <div id="KeyboardContainerDiv">
-            <h1 id="KeyboardNumber">Keyboard One</h1><br>
+            <div id="keyboardSectionHeaderDiv" class="rowDirection">
+              <h1 id="KeyboardNumber">Keyboard One</h1><br>
+              <div id="keyboardInfoMesageDiv">
+                <h3>Click On a Key To Open Configuration Menu</h3>
+              </div>
+            </div>
             <div id="KeyboardRowOne" class="KeyboardRow">
               <button class="KeyConfigButton" id="Escape">Esc</button>
               <button class="KeyConfigButton" id="F1">F1</button>
@@ -1321,19 +1411,36 @@
           </table>
         </div>
       </div>
-      <div id="floatingLightingDiv" class="floatingDiv">
-        <!--lighting settings-->
-        <div id="colorPresetsDiv" class="columnDirectionBorder">
+      <div id="floatingColorDiv" class="floatingDiv">
+        <!--color settings-->
+        <div id="colorPresetsDiv" class="columnDirectionBorder backgroundLight borderColor">
           <h2>Color Presets</h2>
-          <select id="colorPresetsSelector" class="colorSelector">
-            <option value="royal" checked>Royal</option>
-            <option value="blueYellow">Blue/Yellow</option>
-            <option value="redWhite">Red/White</option>
-            <option value="limeMagenta">Lime/Magenta</option>
+          <select id="colorPresetsSelector" class="colorSelector backgroundDark accentColor borderColor" onchange="updateColors(this.value)">
+            <!--color presets including, royal, vaporwave (light), synthwave (dark), scenecore, jazz cup, groovy 70's, gothic, memphis style, espresso, hardware store (orange), hardware store (blue), fast food, barn, joker, forest, starry night, freedom, irish, colcano, christmas, halloween-->
+            <option value="Royal" checked>Royal</option>
             <option value="Vaporwave">Vaporwave</option>
+            <option value="Synthwave">Synthwave</option>
+            <option value="Scenecore">Scenecore</option>
+            <option value="JazzCup">Jazz Cup</option>
+            <option value="Groovy70s">Groovy 70's</option>
+            <option value="Gothic">Gothic</option>
+            <option value="MemphisStyle">Memphis Style</option>
+            <option value="Espresso">Espresso</option>
+            <option value="HardwareStoreOrange">Hardware Store 1</option>
+            <option value="HardwareStoreBlue">Hardware Store 2</option>
+            <option value="FastFood">Fast Food</option>
+            <option value="Barn">Barn</option>
+            <option value="Joker">Joker</option>
+            <option value="Forest">Forest</option>
+            <option value="StarryNight">Starry Night</option>
+            <option value="Freedom">Freedom</option>
+            <option value="Irish">Irish</option>
+            <option value="Volcano">Volcano</option>
+            <option value="Christmas">Christmas</option>
+            <option value="Halloween">Halloween</option>
           </select>
         </div>
-        <div id="appColorsDiv" class="columnDirectionBorder">
+        <div id="appColorsDiv" class="columnDirectionBorder backgroundLight borderColor">
           <h2>App Colors</h2>
           <table>
             <tr>
@@ -1354,7 +1461,7 @@
             </tr>
           </table>
         </div>
-        <div id="sliderColorsDiv" class="columnDirectionBorder">
+        <div id="sliderColorsDiv" class="columnDirectionBorder backgroundLight borderColor">
           <h2>Slider Colors</h2>
           <table>
             <tr>
@@ -1367,7 +1474,7 @@
             </tr>
           </table>
         </div>
-        <div id="muteButtonColorsDiv" class="columnDirectionBorder">
+        <div id="muteButtonColorsDiv" class="columnDirectionBorder backgroundLight borderColor">
           <h2>Mute Button Colors</h2>
           <table>
             <tr>
@@ -1425,6 +1532,218 @@
   function updateSliderLevel(sliderId, sliderValue) {
     console.log('SliderId: ' + sliderId + ' SliderValue: ' + sliderValue);
     document.getElementById(sliderId).innerText = sliderValue;
+  }
+
+  function updateColors(colorPreset) {
+    console.log('Color Preset: ' + colorPreset);
+    var darkColor, lightColor, accentColor, borderColor, muteColor, uncheckedColor, routerColor;
+    switch(colorPreset) {
+      case 'Royal':
+        darkColor = '#6205ba';
+        lightColor = '#6250ba';
+        accentColor = '#ffda7e';
+        borderColor = '#ffda7e';
+        muteColor = 'red';
+        uncheckedColor = '#fff';
+        routerColor = '#90ee90';
+        break;
+      case 'Vaporwave':
+        darkColor = '#FF00FF'; // Magenta
+        lightColor = '#00FFFF'; // Cyan
+        accentColor = '#fff'; // White
+        borderColor = '#fff'; // White
+        muteColor = 'red';
+        uncheckedColor = '#fff';
+        routerColor = '#90ee90';
+        break;
+      case 'Synthwave':
+        darkColor = '#8B008B'; // Darker Magenta
+        lightColor = '#008B8B'; // Darker Cyan
+        accentColor = '#FFA500'; // Orange
+        borderColor = '#FFA500'; // Orange
+        muteColor = 'red';
+        uncheckedColor = '#fff';
+        routerColor = '#90ee90';
+        break;
+      case 'Christmas':
+        darkColor = '#006400'; // Dark Green
+        lightColor = '#00FF00'; // Light Green
+        accentColor = '#FF0000'; // Red
+        borderColor = '#FF0000'; // Red
+        muteColor = 'red';
+        uncheckedColor = '#fff';
+        routerColor = '#90ee90';
+        break;
+      case 'Halloween':
+        darkColor = '#FF8C00'; // Dark Orange
+        lightColor = '#FFA500'; // Light Orange
+        accentColor = '#000000'; // Black
+        borderColor = '#000000'; // Black
+        muteColor = 'red';
+        uncheckedColor = '#fff';
+        routerColor = '#90ee90';
+        break;
+      case 'Irish':
+        darkColor = '#008000'; // Green (Irish flag)
+        lightColor = '#FFFFFF'; // White (Irish flag)
+        accentColor = '#FFA500'; // Orange (Irish flag)
+        borderColor = '#FFA500'; // Orange (Irish flag)
+        muteColor = 'red';
+        uncheckedColor = '#fff';
+        routerColor = '#90ee90';
+        break;
+      case 'Volcano':
+        darkColor = 'black'; // Dark Gray
+        lightColor = 'darkGray'; // Orange
+        accentColor = '#FFA500'; // Yellow
+        borderColor = '#FFA500'; // Yellow
+        muteColor = 'red';
+        uncheckedColor = '#fff';
+        routerColor = '#90ee90';
+        break;
+      case 'Scenecore':
+        darkColor = '#FF00FF'; // Magenta
+        lightColor = '#00FF00'; // Lime Green
+        accentColor = 'linear-gradient(to right, red, orange, yellow, green, blue, indigo, violet)'; // Rainbow
+        borderColor = 'linear-gradient(to right, red, orange, yellow, green, blue, indigo, violet)'; // Rainbow
+        muteColor = 'red';
+        uncheckedColor = '#fff';
+        routerColor = '#90ee90';
+        break;
+      case 'JazzCup':
+        darkColor = '#008080'; // Teal
+        lightColor = '#40E0D0'; // Light Teal
+        accentColor = '#800080'; // Purple
+        borderColor = '#800080'; // Purple
+        muteColor = 'red';
+        uncheckedColor = '#fff';
+        routerColor = '#90ee90';
+        break;
+      case 'Groovy70s':
+        darkColor = '#8B4513'; // Brown
+        lightColor = '#FFA500'; // Orange
+        accentColor = '#FFD700'; // Yellow
+        borderColor = '#FFD700'; // Yellow
+        muteColor = 'red';
+        uncheckedColor = '#fff';
+        routerColor = '#90ee90';
+        break;
+      case 'Gothic':
+        darkColor = '#000000'; // Red
+        lightColor = '#000000'; // Red
+        accentColor = '#FF0000'; // Black
+        borderColor = '#FF0000'; // Black
+        muteColor = 'red';
+        uncheckedColor = '#fff';
+        routerColor = '#90ee90';
+        break;
+      case 'MemphisStyle':
+        darkColor = '#0000FF'; // Blue
+        lightColor = '#FFC0CB'; // Pink
+        accentColor = '#FFFF00'; // Yellow
+        borderColor = '#FFFF00'; // Yellow
+        muteColor = 'red';
+        uncheckedColor = '#fff';
+        routerColor = '#90ee90';
+        break;
+      case 'Espresso':
+        darkColor = '#4B2E2E'; // Dark Brown
+        lightColor = '#F5DEB3'; // Wheat (Cream)
+        accentColor = '#FFFDD0'; // Cream
+        borderColor = '#FFFDD0'; // Cream
+        muteColor = 'red';
+        uncheckedColor = '#fff';
+        routerColor = '#90ee90';
+        break;
+      case 'HardwareStoreOrange':
+        darkColor = '#FF8C00'; // Dark Orange (Home Depot)
+        lightColor = '#FFA500'; // Light Orange (Home Depot)
+        accentColor = '#000000'; // Black
+        borderColor = '#000000'; // Black
+        muteColor = 'red';
+        uncheckedColor = '#fff';
+        routerColor = '#90ee90';
+        break;
+      case 'HardwareStoreBlue':
+        darkColor = '#0047AB'; // Dark Blue (Lowe's)
+        lightColor = '#ADD8E6'; // Light Blue (Lowe's)
+        accentColor = '#FFFFFF'; // White
+        borderColor = '#FFFFFF'; // White
+        muteColor = 'red';
+        uncheckedColor = '#fff';
+        routerColor = '#90ee90';
+        break;
+      case 'FastFood':
+        darkColor = '#FF0000'; // Red (McDonald's)
+        lightColor = '#FFD700'; // Dark Yellow (McDonald's)
+        accentColor = '#FFFFFF'; // White
+        borderColor = '#FFFFFF'; // White
+        muteColor = 'red';
+        uncheckedColor = '#fff';
+        routerColor = '#90ee90';
+        break;
+      case 'Barn':
+        darkColor = '#FF0000'; // Red (Brighter Barn Red)
+        lightColor = '#FF0000'; // White
+        accentColor = '#FFFFFF'; // Dark Brown
+        borderColor = '#FFFFFF'; // Dark Brown
+        muteColor = 'red';
+        uncheckedColor = '#fff';
+        routerColor = '#90ee90';
+        break;
+      case 'Joker':
+        darkColor = '#800080'; // Purple
+        lightColor = '#00FF00'; // Green
+        accentColor = '#FFFFFF'; // White
+        borderColor = '#FFFFFF'; // White
+        muteColor = 'red';
+        uncheckedColor = '#fff';
+        routerColor = '#90ee90';
+        break;
+      case 'Forest':
+        darkColor = '#8B4513'; // Dark Brown
+        lightColor = '#228B22'; // Dark Green
+        accentColor = '#DAA520'; // Goldenrod
+        borderColor = '#DAA520'; // Goldenrod
+        muteColor = 'red';
+        uncheckedColor = '#fff';
+        routerColor = '#90ee90';
+        break;
+      case 'StarryNight':
+        darkColor = '#000033'; // Very Dark Blue
+        lightColor = '#000080'; // Dark Blue
+        accentColor = '#FFFF00'; // Yellow
+        borderColor = '#FFFF00'; // Yellow
+        muteColor = 'red';
+        uncheckedColor = '#fff';
+        routerColor = '#90ee90';
+        break;
+      case 'Freedom':
+        darkColor = '#0000FF'; // Blue
+        lightColor = '#FF0000'; // Red
+        accentColor = '#FFFFFF'; // White
+        borderColor = '#FFFFFF'; // White
+        muteColor = 'red';
+        uncheckedColor = '#fff';
+        routerColor = '#90ee90';
+        break;
+      default:
+        darkColor = '#6205ba';
+        lightColor = '#6250ba';
+        accentColor = '#ffda7e';
+        borderColor = '#ffda7e';
+        muteColor = 'red';
+        uncheckedColor = '#fff';
+        routerColor = '#90ee90';
+        break;
+    }
+    document.documentElement.style.setProperty('--background-dark', darkColor);
+    document.documentElement.style.setProperty('--background-light', lightColor);
+    document.documentElement.style.setProperty('--accent-color', accentColor);
+    document.documentElement.style.setProperty('--border-color', borderColor);
+    document.documentElement.style.setProperty('--unchecked', uncheckedColor);
+    document.documentElement.style.setProperty('--mute', muteColor);
+    document.documentElement.style.setProperty('--router', routerColor);
   }
 
   function showDivById(divId, className) {
