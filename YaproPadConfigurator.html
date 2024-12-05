@@ -4,10 +4,10 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <style>
   :root {
-    --background-dark: #8f00ff;
-    --background-light: #8f00ff;
-    --accent-color: #f7ef8a;
-    --border-color: #f7ef8a;
+    --background-dark: #462969;
+    --background-light: #6B3FA0;
+    --accent-color: #ffd700;
+    --border-color: #ffd700;
     --unchecked: white;
     --mute: red;
     --router: lightgreen;
@@ -1533,16 +1533,15 @@
     console.log('SliderId: ' + sliderId + ' SliderValue: ' + sliderValue);
     document.getElementById(sliderId).innerText = sliderValue;
   }
-
   function updateColors(colorPreset) {
     console.log('Color Preset: ' + colorPreset);
     var darkColor, lightColor, accentColor, borderColor, muteColor, uncheckedColor, routerColor;
     switch(colorPreset) {
       case 'Royal':
-        darkColor = '#6205ba';
-        lightColor = '#6250ba';
-        accentColor = '#ffda7e';
-        borderColor = '#ffda7e';
+        darkColor = '#462969';
+        lightColor = '#6B3FA0';
+        accentColor = '#ffd700';
+        borderColor = '#ffd700';
         muteColor = 'red';
         uncheckedColor = '#fff';
         routerColor = '#90ee90';
@@ -1557,8 +1556,8 @@
         routerColor = '#90ee90';
         break;
       case 'Synthwave':
-        darkColor = '#8B008B'; // Darker Magenta
-        lightColor = '#008B8B'; // Darker Cyan
+        lightColor = '#0100EC'; // Darker Cyan
+        darkColor = '#FB36F4'; // Darker Magenta
         accentColor = '#FFA500'; // Orange
         borderColor = '#FFA500'; // Orange
         muteColor = 'red';
@@ -1567,34 +1566,34 @@
         break;
       case 'Christmas':
         darkColor = '#006400'; // Dark Green
-        lightColor = '#00FF00'; // Light Green
-        accentColor = '#FF0000'; // Red
-        borderColor = '#FF0000'; // Red
+        lightColor = '#FF0000'; // Light Green
+        accentColor = '#FFFF'; // Red
+        borderColor = '#FFFF'; // Red
         muteColor = 'red';
         uncheckedColor = '#fff';
         routerColor = '#90ee90';
         break;
       case 'Halloween':
-        darkColor = '#FF8C00'; // Dark Orange
-        lightColor = '#FFA500'; // Light Orange
-        accentColor = '#000000'; // Black
-        borderColor = '#000000'; // Black
+        darkColor = '#6B3FA0'; // Orange
+        lightColor = '#FF8C00'; // Purple
+        accentColor = '#FFDF00'; // Yellow
+        borderColor = '#FFDF00'; // Yellow
         muteColor = 'red';
         uncheckedColor = '#fff';
         routerColor = '#90ee90';
         break;
       case 'Irish':
-        darkColor = '#008000'; // Green (Irish flag)
-        lightColor = '#FFFFFF'; // White (Irish flag)
-        accentColor = '#FFA500'; // Orange (Irish flag)
-        borderColor = '#FFA500'; // Orange (Irish flag)
+        darkColor = '#169B62'; // Green (Irish flag)
+        lightColor = '#FF883E'; // White (Irish flag)
+        accentColor = '#FFFF'; // Orange (Irish flag)
+        borderColor = '#FFFF'; // Orange (Irish flag)
         muteColor = 'red';
         uncheckedColor = '#fff';
         routerColor = '#90ee90';
         break;
       case 'Volcano':
-        darkColor = 'black'; // Dark Gray
-        lightColor = 'darkGray'; // Orange
+        darkColor = '#2A2E31'; // Dark Gray
+        lightColor = '#899192'; // Orange
         accentColor = '#FFA500'; // Yellow
         borderColor = '#FFA500'; // Yellow
         muteColor = 'red';
@@ -1604,17 +1603,17 @@
       case 'Scenecore':
         darkColor = '#FF00FF'; // Magenta
         lightColor = '#00FF00'; // Lime Green
-        accentColor = 'linear-gradient(to right, red, orange, yellow, green, blue, indigo, violet)'; // Rainbow
-        borderColor = 'linear-gradient(to right, red, orange, yellow, green, blue, indigo, violet)'; // Rainbow
+        accentColor = '#8A2BE2'; // Purple
+        borderColor = '#8A2BE2'; // Purple
         muteColor = 'red';
         uncheckedColor = '#fff';
         routerColor = '#90ee90';
         break;
       case 'JazzCup':
-        darkColor = '#008080'; // Teal
-        lightColor = '#40E0D0'; // Light Teal
-        accentColor = '#800080'; // Purple
-        borderColor = '#800080'; // Purple
+        darkColor = '#800080'; // Purple
+        lightColor = '#008080'; // Teal
+        accentColor = '#FFFFFF'; // White
+        borderColor = '#FFFFFF'; // White
         muteColor = 'red';
         uncheckedColor = '#fff';
         routerColor = '#90ee90';
@@ -1638,35 +1637,35 @@
         routerColor = '#90ee90';
         break;
       case 'MemphisStyle':
-        darkColor = '#0000FF'; // Blue
-        lightColor = '#FFC0CB'; // Pink
-        accentColor = '#FFFF00'; // Yellow
-        borderColor = '#FFFF00'; // Yellow
+        darkColor = '#4458a0'; // Blue
+        lightColor = '#bd098e'; // Pink
+        accentColor = '#f1c40f'; // Yellow
+        borderColor = '#cd2d48'; // Yellow
         muteColor = 'red';
         uncheckedColor = '#fff';
         routerColor = '#90ee90';
         break;
       case 'Espresso':
         darkColor = '#4B2E2E'; // Dark Brown
-        lightColor = '#F5DEB3'; // Wheat (Cream)
-        accentColor = '#FFFDD0'; // Cream
-        borderColor = '#FFFDD0'; // Cream
+        lightColor = '#A67B5B'; // Wheat (Cream)
+        accentColor = '#DBC1AA'; // Cream
+        borderColor = '#DBC1AA'; // Cream
         muteColor = 'red';
         uncheckedColor = '#fff';
         routerColor = '#90ee90';
         break;
       case 'HardwareStoreOrange':
-        darkColor = '#FF8C00'; // Dark Orange (Home Depot)
-        lightColor = '#FFA500'; // Light Orange (Home Depot)
-        accentColor = '#000000'; // Black
-        borderColor = '#000000'; // Black
+        darkColor = '#F96302'; // Dark Orange (Home Depot)
+        lightColor = '#F96302'; // Light Orange (Home Depot)
+        accentColor = '#FFFFFF'; // Black
+        borderColor = '#FFFFFF'; // Black
         muteColor = 'red';
         uncheckedColor = '#fff';
         routerColor = '#90ee90';
         break;
       case 'HardwareStoreBlue':
         darkColor = '#0047AB'; // Dark Blue (Lowe's)
-        lightColor = '#ADD8E6'; // Light Blue (Lowe's)
+        lightColor = '#0047AB'; // Light Blue (Lowe's)
         accentColor = '#FFFFFF'; // White
         borderColor = '#FFFFFF'; // White
         muteColor = 'red';
@@ -1683,8 +1682,8 @@
         routerColor = '#90ee90';
         break;
       case 'Barn':
-        darkColor = '#FF0000'; // Red (Brighter Barn Red)
-        lightColor = '#FF0000'; // White
+        darkColor = '#7C0A02'; // Red (Brighter Barn Red)
+        lightColor = '#7C0A02'; // White
         accentColor = '#FFFFFF'; // Dark Brown
         borderColor = '#FFFFFF'; // Dark Brown
         muteColor = 'red';
@@ -1701,10 +1700,10 @@
         routerColor = '#90ee90';
         break;
       case 'Forest':
-        darkColor = '#8B4513'; // Dark Brown
-        lightColor = '#228B22'; // Dark Green
-        accentColor = '#DAA520'; // Goldenrod
-        borderColor = '#DAA520'; // Goldenrod
+        darkColor = '#6e4300'; // Dark Brown
+        lightColor = '#087000'; // Dark Green
+        accentColor = '#fff1ac'; // Tree Flesh
+        borderColor = '#fff1ac'; // Tree Flesh
         muteColor = 'red';
         uncheckedColor = '#fff';
         routerColor = '#90ee90';
