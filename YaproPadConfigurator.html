@@ -40,7 +40,7 @@
     background-color: var(--background-dark);
   }
   #bottomSectionDiv {
-    border: 2px solid var(--border-color);
+    border: 3px solid var(--border-color);
     border-top: none;
     flex-grow: 1;
   }
@@ -60,7 +60,7 @@
     min-height: 90%;
     margin: 2.5%;
     background-color: var(--background-dark);
-    border: 2px solid var(--border-color);
+    border: 3px solid var(--border-color);
     border-radius: 30px;
   }
   #sidebarDiv,#sliderConfigurationDiv,#KeyboardConfigurationDiv,#keyboardSelectorDiv {
@@ -74,11 +74,11 @@
     flex-direction:row;
     width:95%;
     border-radius:0 0 0 30px;
-    border-bottom:solid 2px;
-    border-left:solid 2px;
+    border-bottom:solid 3px;
+    border-left:solid 3px;
     background-color: var(--background-light);
-    border-bottom: solid 2px var(--border-color);
-    border-left: solid 2px var(--border-color);
+    border-bottom: solid 3px var(--border-color);
+    border-left: solid 3px var(--border-color);
 
   }
   #sliderConfigurationMarginDiv {
@@ -92,7 +92,7 @@
     width: 100%;
     background-color: var(--background-light);
     border-radius: 0px 30px 30px 0px;
-    border: solid 2px var(--border-color);
+    border: solid 3px var(--border-color);
     border-left: none;
   }
   #settingsDialog {
@@ -213,14 +213,22 @@
     width: 100%;
     justify-content: flex-start;
   }
-  .keyFunctionSelectorDiv {
+  #keyFunctionContainerDiv {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
     width: 100%;
+    height: 100%;
+  }
+  .keyFunctionSelectorDiv {
+    width: 99.5%;
     height: auto;
     min-height: 70%;
     display: flex;
     flex-direction: column;
     background-color: var(--background-light);
-    border: 2px solid var(--border-color);
+    border: 3px solid var(--border-color);
     border-top: none;
     border-radius: 0px 0px 30px 30px;
   }
@@ -257,7 +265,7 @@
     align-items: center;
     padding: 5%;
     background-color: var(--background-light);
-    border: 2px solid var(--border-color);
+    border: 3px solid var(--border-color);
     border-radius: 30px;
   }
   .HrDiv {
@@ -283,14 +291,14 @@
   }
   .horiTab {
     border-radius: 30px 0px 0px 30px;
-    border-right: 2px solid var(--border-color);
+    border-right: 3px solid var(--border-color);
   }
   .vertTab {
     border-radius: 30px 30px 0px 0px;
-    border-bottom: 2px solid var(--border-color);
+    border-bottom: 3px solid var(--border-color);
   }
   .radioButton {
-    border: 2px solid var(--border-color);
+    border: 3px solid var(--border-color);
     border-radius: 30px;
     margin: 5px 10px;
     font-size: 20px;
@@ -301,12 +309,12 @@
   }
   .horiTab:checked {
     background-color: var(--background-light);
-    border: 2px solid var(--border-color);
+    border: 3px solid var(--border-color);
     border-right: none;
   }
   .vertTab:checked {
     background-color: var(--background-light);
-    border: 2px solid var(--border-color);
+    border: 3px solid var(--border-color);
     border-bottom: none;
   }
   .radioButton:checked {
@@ -330,7 +338,7 @@
   .sliderIconCanvas {
     margin: 10px;
     width: 128px;
-    height: 64px;
+    height: 63px;
     background-color: black;
   }
   .mute, .router {
@@ -397,7 +405,7 @@
     flex-grow: 1;
     padding: 5%;
     border-radius: 30px;
-    border: 2px solid var(--border-color);
+    border: 3px solid var(--border-color);
     background-color:var(--background-dark);
   }
   .columnDirection, .columnDirectionBorder, .columnDirectionBorderDark {
@@ -410,7 +418,7 @@
   }
   .columnDirectionBorder, .columnDirectionBorderDark {
     width: min-content;
-    border: 2px solid var(--border-color);
+    border: 3px solid var(--border-color);
   }
   .columnDirectionBorderDark {
     background-color:var(--background-dark);
@@ -489,7 +497,7 @@
     font-size: 30px;
   }
   table, td {
-    border: 2px solid var(--border-color);
+    border: 3px solid var(--border-color);
     margin: 0px;
     padding: 0px;
     border-collapse: collapse;
@@ -549,21 +557,41 @@
         <div id="KeyModeSelectorDiv">
           <input type="radio" id="SoundboardModeSelector" class="vertTab" name="ButtonMode" value="Macro" onclick="showDivById('macroFunctionSelectorDiv', 'keyFunctionSelectorDiv')" checked>
           <input type="radio" id="MacroModeSelector" class="vertTab" name="ButtonMode" value="Soundboard" onclick="showDivById('soundboardFunctionSelectorDiv', 'keyFunctionSelectorDiv')">
+          <input type="radio" id="HardwareModeSelector" class="vertTab" name="ButtonMode" value="Hardware" onclick="showDivById('hardwareFunctionSelectorDiv', 'keyFunctionSelectorDiv')">
         </div>
-        <div id="macroFunctionSelectorDiv" class="keyFunctionSelectorDiv">
-          <label for="macro-name">Macro Name:</label><br>
-          <input type="text" id="macro-name" name="macro-name" required><br>
-          <label for="keyCombinationTextarea">Key Combination:</label><br>
-          <textarea cols="30" rows="5" id="keyCombinationTextarea"></textarea><br>
-          <button type="button" id="clear" class="configDark" onclick="clearKeyCombination()">Clear</button>
-          <input type="hidden" name="button-id" class="config" value="${ConfigButtonId}">
+        <div id="keyFunctionContainerDiv">
+          <div id="macroFunctionSelectorDiv" class="keyFunctionSelectorDiv">
+            <label for="macro-name">Macro Name:</label><br>
+            <input type="text" id="macro-name" name="macro-name" required><br>
+            <label for="keyCombinationTextarea">Key Combination:</label><br>
+            <textarea cols="30" rows="5" id="keyCombinationTextarea"></textarea><br>
+            <button type="button" id="clear" class="configDark" onclick="clearKeyCombination()">Clear</button>
+            <input type="hidden" name="button-id" class="config" value="${ConfigButtonId}">
+          </div>
+          <div id="soundboardFunctionSelectorDiv" class="keyFunctionSelectorDiv" style="display: none;">
+            <label for="soundboard-name">Sound Effect Name:</label><br>
+            <input type="text" id="soundboard-name" name="soundboard-name" required><br>
+            <label for="soundboard-file">Soundboard File:</label><br>
+            <input type="file" id="soundboard-file" name="soundboard-file" required><br>
+            <input type="hidden" name="button-id" class="config" value="${ConfigButtonId}">
+          </div>
+          <div id="hardwareFunctionSelectorDiv" class="keyFunctionSelectorDiv" style="display: none;">
+            <label for="hardware-name">Hardware Function Name:</label><br>
+            <input type="text" id="hardware-name" name="hardware-name" required><br>
+            <label for="hardware-function">Hardware Function:</label><br>
+            <select id="hardware-function" name="hardware-function" required>
+              <option value="1">Function 1</option>
+              <option value="2">Function 2</option>
+              <option value="3">Function 3</option>
+              <option value="4">Function 4</option>
+              <option value="5">Function 5</option>
+              <option value="6">Function 6</option>
+              <option value="7">Function 7</option>
+              <option value="8">Function 8</option>
+            </select><br>
+            <input type="hidden" name="button-id" class="config" value="${ConfigButtonId}">
+          </div>
         </div>
-        <div id="soundboardFunctionSelectorDiv" class="keyFunctionSelectorDiv" style="display: none;">
-          <label for="soundboard-name">Sound Effect Name:</label><br>
-          <input type="text" id="soundboard-name" name="soundboard-name" required><br>
-          <label for="soundboard-file">Soundboard File:</label><br>
-          <input type="file" id="soundboard-file" name="soundboard-file" required><br>
-          <input type="hidden" name="button-id" class="config" value="${ConfigButtonId}">
       </div>
     </dialog>
     <dialog id="micSetupModal" class="config">
@@ -574,8 +602,16 @@
           <div id="micTypeSelector" class="columnDirectionBorder">
             <h2>Mic Type</h2>
             <input type="radio" id="dynamicMic" class="radioButton" name="micType" value="Dynamic" checked>
-            <input type="radio" id="condenserMic" class="radioButton" name="micType" value="Condenser(+48V)">
+            <input type="radio" id="condenserMic" class="radioButton" name="micType" value="Condenser">
             <input type="radio" id="headsetMic" class="radioButton" name="micType" value="3.5mm">
+          </div>
+          <div id="micTypeSelector" class="columnDirectionBorder">
+            <h2>Phantom Power</h2>
+            <input type="radio" id="phantomPowerOn" class="radioButton" name="phantomPower" value="Off" checked>
+            <input type="radio" id="phantomPowerOff" class="radioButton" name="phantomPower" value="48V">
+            <input type="radio" id="phantomPowerOff" class="radioButton" name="phantomPower" value="24V">
+            <input type="radio" id="phantomPowerOff" class="radioButton" name="phantomPower" value="12V">
+            <input type="radio" id="phantomPowerOff" class="radioButton" name="phantomPower" value="5V">
           </div>
           <div id="micGainSelector" class="columnDirectionBorder">
             <h2>Mic Gain</h2>
@@ -1197,7 +1233,6 @@
         <div id="slidersSettingsWideBody" class="rowDirection">
           <div id="sliderModalDiv" class="columnDirectionBorder expandingHoriDiv">
             <h2>Show Slider Modal</h2>
-            <h2>Mic Setup</h2>
             <button id="micSetupButton" class="configDark" onclick="document.getElementById('sliderConfigForm').show();">Slider Setup</button>
           </div>
         </div>
@@ -1424,7 +1459,7 @@
             <option value="JazzCup">Jazz Cup</option>
             <option value="Groovy70s">Groovy 70's</option>
             <option value="Gothic">Gothic</option>
-            <option value="MemphisStyle">Memphis Style</option>
+            <option value="memphis">Memphis</option>
             <option value="Espresso">Espresso</option>
             <option value="HardwareStoreOrange">Hardware Store 1</option>
             <option value="HardwareStoreBlue">Hardware Store 2</option>
@@ -1529,6 +1564,12 @@
   </div>
 </div>
 <script>
+  function onLoad () {
+    document.getElementById('micConfig').checked = true;
+  }
+
+  window.onload = onLoad;
+
   function updateSliderLevel(sliderId, sliderValue) {
     console.log('SliderId: ' + sliderId + ' SliderValue: ' + sliderValue);
     document.getElementById(sliderId).innerText = sliderValue;
@@ -1636,7 +1677,7 @@
         uncheckedColor = '#fff';
         routerColor = '#90ee90';
         break;
-      case 'MemphisStyle':
+      case 'memphis':
         darkColor = '#4458a0'; // Blue
         lightColor = '#bd098e'; // Pink
         accentColor = '#f1c40f'; // Yellow
