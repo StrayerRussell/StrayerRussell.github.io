@@ -271,6 +271,7 @@
   .HrDiv {
     width: 100%;
     height: 15px;
+    min-height: 15px;
     background-color: var(--background-dark);
     margin: 0px;
   }
@@ -1240,10 +1241,10 @@
       <div id="floatingKeyboardDiv" class="floatingDiv">
         <!--start of keyboard section-->
         <div id="keyboardSelectorDiv">
-          <input type="radio" id="KeyboardOne" class="horiTab" name="keyboard" value="One" onclick="populateKbDiv('Keyboard One')" checked><br>
-          <input type="radio" id="KeyboardTwo" class="horiTab" name="keyboard" value="Two" onclick="populateKbDiv('Keyboard Two')"><br>
-          <input type="radio" id="KeyboardThree" class="horiTab" name="keyboard" value="Three" onclick="populateKbDiv('Keyboard Three')"><br>
-          <input type="radio" id="KeyboardFour" class="horiTab" name="keyboard" value="Four" onclick="populateKbDiv('Keyboard Four')">
+          <input type="radio" id="KeyboardOne" class="horiTab kbNumSelector" name="keyboard" value="One" onclick="populateKbDiv('Keyboard One')" checked><br>
+          <input type="radio" id="KeyboardTwo" class="horiTab kbNumSelector" name="keyboard" value="Two" onclick="populateKbDiv('Keyboard Two')"><br>
+          <input type="radio" id="KeyboardThree" class="horiTab kbNumSelector" name="keyboard" value="Three" onclick="populateKbDiv('Keyboard Three')"><br>
+          <input type="radio" id="KeyboardFour" class="horiTab kbNumSelector" name="keyboard" value="Four" onclick="populateKbDiv('Keyboard Four')">
         </div>
         <div id="KeyboardConfigurationDiv">
           <div id="KeyboardContainerDiv">
