@@ -84,7 +84,7 @@
   #sliderConfigurationMarginDiv {
     width: 100%;
     max-width: 100%;
-    overflow-x: auto;
+    overflow-x: scroll;
     margin-left: 2.5%;
     scrollbar-width: thin;
   }
@@ -204,9 +204,6 @@
     transform: rotate(180deg);
     margin: 0px 20px 0px 0px;
   }
-  #inputsLevelsDiv {
-    flex-grow: 3;
-  }
   #wideMicContainer {
     display: flex;
     min-width: min-content;
@@ -252,7 +249,7 @@
   }
   .exitButton {
     margin: 0%;
-    background-color: red;
+    background-color: var(--mute);
     overflow: wrap;
     font-size: 30px;
   }
@@ -346,7 +343,7 @@
     appearance: none;
     width: 40px;
     height: 40px;
-    background-color: white;
+    background-color: var(--unchecked);
     border-radius: 10px;
   }
   .router {
@@ -444,6 +441,7 @@
     display: flex;
     flex-grow: 1;
     box-sizing: border-box;
+    min-width: min-content;
   }
   .invisTable {
     border-color: transparent;
@@ -459,7 +457,7 @@
     margin: 0 30px 10px 30px;
   }
   h3 {
-    margin: 0px 5px;
+    margin: 0px 10px;
   }
   input[type=range][orient=vertical] {
     writing-mode: vertical-lr;
@@ -677,62 +675,78 @@
     <div id="sliderConfigurationDiv" class="backgroundLight accentColor borderColor">
       <div id="sliderConfigurationMarginDiv">
         <div id="wideSliderConfigurationDiv" class="rowDirection">
-          <div id="channelOneSliderDiv" class="sliderContainerDiv">
+          <!--Sliders One Through Ten-->
+          <div id="channelOneSliderDiv" class="sliderContainerDiv visibleSlider">
             <h3 id="channelOneTitle">Channel 1</h3>
             <canvas id="channelOneCanvas" class="sliderIconCanvas"></canvas>
             <input type="range" min="0" max="255" value="50" id="channelOneSlider" class="slider" orient="vertical">
             <input type="checkbox" id="channelOneMute" class="mute backgroundDark accentColor borderColor">
             <h2>Mute</h2>
           </div>
-          <div id="channelTwoSliderDiv" class="sliderContainerDiv">
+          <div id="channelTwoSliderDiv" class="sliderContainerDiv visibleSlider">
             <h3 id="channelTwoTitle">Channel 2</h3>
             <canvas id="channelTwoCanvas" class="sliderIconCanvas"></canvas>
             <input type="range" min="0" max="255" value="50" id="channelTwoSlider" class="slider" orient="vertical">
             <input type="checkbox" id="channelTwoMute" class="mute backgroundDark accentColor borderColor">
             <h2>Mute</h2>
           </div>
-          <div id="channelThreeSliderDiv" class="sliderContainerDiv">
+          <div id="channelThreeSliderDiv" class="sliderContainerDiv visibleSlider">
             <h3 id="channelThreeTitle">Channel 3</h3>
             <canvas id="channelThreeCanvas" class="sliderIconCanvas"></canvas>
             <input type="range" min="0" max="255" value="50" id="channelThreeSlider" class="slider" orient="vertical">
             <input type="checkbox" id="channelThreeMute" class="mute backgroundDark accentColor borderColor">
             <h2>Mute</h2>
           </div>
-          <div id="channelFourSliderDiv" class="sliderContainerDiv">
+          <div id="channelFourSliderDiv" class="sliderContainerDiv visibleSlider">
             <h3 id="channelFourTitle">Channel 4</h3>
             <canvas id="channelFourCanvas" class="sliderIconCanvas"></canvas>
             <input type="range" min="0" max="255" value="50" id="channelFourSlider" class="slider" orient="vertical">
             <input type="checkbox" id="channelFourMute" class="mute backgroundDark accentColor borderColor">
             <h2>Mute</h2>
           </div>
-          <div id="channelFiveSliderDiv" class="sliderContainerDiv">
+          <div id="channelFiveSliderDiv" class="sliderContainerDiv visibleSlider">
             <h3 id="channelFiveTitle">Channel 5</h3>
             <canvas id="channelFiveCanvas" class="sliderIconCanvas"></canvas>
             <input type="range" min="0" max="255" value="50" id="channelFiveSlider" class="slider" orient="vertical">
             <input type="checkbox" id="channelFiveMute" class="mute backgroundDark accentColor borderColor">
             <h2>Mute</h2>
           </div>
-          <div id="channelSixSliderDiv" class="sliderContainerDiv">
+          <div id="channelSixSliderDiv" class="sliderContainerDiv visibleSlider">
             <h3 id="channelSixTitle">Channel 6</h3>
             <canvas id="channelSixCanvas" class="sliderIconCanvas"></canvas>
             <input type="range" min="0" max="255" value="50" id="channelSixSlider" class="slider" orient="vertical">
             <input type="checkbox" id="channelSixMute" class="mute backgroundDark accentColor borderColor">
             <h2>Mute</h2>
           </div>
-          <div id="channelSevenSliderDiv" class="sliderContainerDiv">
+          <div id="channelSevenSliderDiv" class="sliderContainerDiv visibleSlider">
             <h3 id="channelSevenTitle">Channel 7</h3>
             <canvas id="channelSevenCanvas" class="sliderIconCanvas"></canvas>
             <input type="range" min="0" max="255" value="50" id="channelSevenSlider" class="slider" orient="vertical">
             <input type="checkbox" id="channelSevenMute" class="mute backgroundDark accentColor borderColor">
             <h2>Mute</h2>
           </div>
-          <div id="channelEightSliderDiv" class="sliderContainerDiv">
+          <div id="channelEightSliderDiv" class="sliderContainerDiv visibleSlider">
             <h3 id="channelEightTitle">Channel 8</h3>
             <canvas id="channelEightCanvas" class="sliderIconCanvas"></canvas>
             <input type="range" min="0" max="255" value="50" id="channelEightSlider" class="slider" orient="vertical">
             <input type="checkbox" id="channelEightMute" class="mute backgroundDark accentColor borderColor">
             <h2>Mute</h2>
           </div>
+          <div id="channelNineSliderDiv" class="sliderContainerDiv visibleSlider">
+            <h3 id="channelNineTitle">Channel 9</h3>
+            <canvas id="channelNineCanvas" class="sliderIconCanvas"></canvas>
+            <input type="range" min="0" max="255" value="50" id="channelNineSlider" class="slider" orient="vertical">
+            <input type="checkbox" id="channelNineMute" class="mute backgroundDark accentColor borderColor">
+            <h2>Mute</h2>
+          </div>
+          <div id="channelTenSliderDiv" class="sliderContainerDiv visibleSlider">
+            <h3 id="channelTenTitle">Channel 10</h3>
+            <canvas id="channelTenCanvas" class="sliderIconCanvas"></canvas>
+            <input type="range" min="0" max="255" value="50" id="channelTenSlider" class="slider" orient="vertical">
+            <input type="checkbox" id="channelTenMute" class="mute backgroundDark accentColor borderColor">
+            <h2>Mute</h2>
+          </div>
+          <!--Seperator-->
         </div>
       </div>
     </div>
@@ -742,8 +756,8 @@
     <!--mic, levels, sliders, keyboard, routing, color, settings-->
     <input type="radio" id="micConfig" class="vertTab" name="menu" value="Mic" onclick="showDivById('floatingMicDiv', 'floatingDiv')" checked>
     <input type="radio" id="levelsConfig" class="vertTab" name="menu" value="Levels" onclick="showDivById('floatingLevelsDiv', 'floatingDiv')">
-    <input type="radio" id="slidersConfig" class="vertTab" name="menu" value="Sliders" onclick="showDivById('floatingSlidersDiv', 'floatingDiv')">
-    <input type="radio" id="keyboardConfig" class="vertTab" name="menu" value="Keyboard" onclick="showDivById('floatingKeyboardDiv', 'floatingDiv')">
+    <input type="radio" id="slidersConfig" class="vertTab sliderTab" name="menu" value="Sliders" onclick="showDivById('floatingSlidersDiv', 'floatingDiv')">
+    <input type="radio" id="keyboardConfig" class="vertTab keyboardTab" name="menu" value="Keyboard" onclick="showDivById('floatingKeyboardDiv', 'floatingDiv')">
     <input type="radio" id="routingConfig" class="vertTab" name="menu" value="Routing" onclick="showDivById('floatingRoutingDiv', 'floatingDiv')">
     <input type="radio" id="colorConfig" class="vertTab" name="menu" value="Color" onclick="showDivById('floatingColorDiv', 'floatingDiv')">
     <input type="radio" id="settingsConfig" class="vertTab" name="menu" value="Settings" onclick="showDivById('floatingSettingsDiv', 'floatingDiv')">
@@ -957,7 +971,7 @@
           </div>
           <div id="inputLevelsButtonWrapper" class="columnDirection buttonWrapper">
             <div id="InputLevelsSliderDiv" class="rowDirection">
-              <div class="columnDirection">
+              <div class="sliderContainerDiv">
                 <div id="micLevelsSliderDiv" class="sliderContainerDiv">
                   <h3>Mic</h3>
                   <h3>Vol</h3>
@@ -966,7 +980,7 @@
                   <h3 class="volumePercentage">%</h3>
                 </div>
               </div>
-              <div class="columnDirection">
+              <div class="sliderContainerDiv">
                 <div id="commsLevelsSliderDiv" class="sliderContainerDiv">
                   <h3>Comms</h3>
                   <h3>Vol</h3>
@@ -975,7 +989,7 @@
                   <h3 class="volumePercentage">%</h3>
                 </div>
               </div>
-              <div class="columnDirection">
+              <div class="sliderContainerDiv">
                 <div id="musicLevelsSliderDiv" class="sliderContainerDiv">
                   <h3>Music</h3>
                   <h3>Vol</h3>
@@ -984,7 +998,7 @@
                   <h3 class="volumePercentage">%</h3>
                 </div>
               </div>
-              <div class="columnDirection">
+              <div class="sliderContainerDiv">
                 <div id="gameLevelsSliderDiv" class="sliderContainerDiv">
                   <h3>Game</h3>
                   <h3>Vol</h3>
@@ -993,7 +1007,7 @@
                   <h3 class="volumePercentage">%</h3>
                 </div>
               </div>
-              <div class="columnDirection">
+              <div class="sliderContainerDiv">
                 <div id="consoleLevelsSliderDiv" class="sliderContainerDiv">
                   <h3>Console</h3>
                   <h3>Vol</h3>
@@ -1002,7 +1016,7 @@
                   <h3 class="volumePercentage">%</h3>
                 </div>
               </div>
-              <div class="columnDirection">
+              <div class="sliderContainerDiv">
                 <div id="lineInLevelsSliderDiv" class="sliderContainerDiv">
                   <h3>Line In</h3>
                   <h3>Vol</h3>
@@ -1011,7 +1025,7 @@
                   <h3 class="volumePercentage">%</h3>
                 </div>
               </div>
-              <div class="columnDirection">
+              <div class="sliderContainerDiv">
                 <div id="systemLevelsSliderDiv" class="sliderContainerDiv">
                   <h3>System</h3>
                   <h3>Vol</h3>
@@ -1020,7 +1034,7 @@
                   <h3 class="volumePercentage">%</h3>
                 </div>
               </div>
-              <div class="columnDirection">
+              <div class="sliderContainerDiv">
                 <div id="soundboardLevelsSliderDiv" class="sliderContainerDiv">
                   <h3>Sfx</h3>
                   <h3>Vol</h3>
@@ -1034,7 +1048,7 @@
           </div>
           <div id="submixSliderButtonWrapper" class="columnDirection buttonWrapper" style="display: none;">
             <div id="submixLevelsSliderDiv"class="rowDirection">
-              <div id="micLevelsSubmixSlidersContainerDiv" class="columnDirection">
+              <div id="micLevelsSubmixSlidersContainerDiv" class="sliderContainerDiv">
                 <div id="micLevelsSubmixHeaderDiv" class="rowDirection">
                   <h3>Mic</h3>
                 </div>
@@ -1053,7 +1067,7 @@
                   </div>
                 </div>
               </div>
-              <div id="commsLevelsSubmixSlidersContainerDiv" class="columnDirection">
+              <div id="commsLevelsSubmixSlidersContainerDiv" class="sliderContainerDiv">
                 <div id="commsLevelsSubmixHeaderDiv" class="rowDirection">
                   <h3>Comms</h3>
                 </div>
@@ -1072,7 +1086,7 @@
                   </div>
                 </div>
               </div>
-              <div id="musicLevelsSubmixSlidersContainerDiv" class="columnDirection">
+              <div id="musicLevelsSubmixSlidersContainerDiv" class="sliderContainerDiv">
                 <div id="musicLevelsSubmixHeaderDiv" class="rowDirection">
                   <h3>Music</h3>
                 </div>
@@ -1091,7 +1105,7 @@
                   </div>
                 </div>
               </div>
-              <div id="gameLevelsSubmixSlidersContainerDiv" class="columnDirection">
+              <div id="gameLevelsSubmixSlidersContainerDiv" class="sliderContainerDiv">
                 <div id="gameLevelsSubmixHeaderDiv" class="rowDirection">
                   <h3>Game</h3>
                 </div>
@@ -1110,7 +1124,7 @@
                   </div>
                 </div>
               </div>
-              <div id="consoleLevelsSubmixSlidersContainerDiv" class="columnDirection">
+              <div id="consoleLevelsSubmixSlidersContainerDiv" class="sliderContainerDiv">
                 <div id="consoleLevelsSubmixHeaderDiv" class="rowDirection">
                   <h3>Console</h3>
                 </div>
@@ -1129,7 +1143,7 @@
                   </div>
                 </div>
               </div>
-              <div id="lineInLevelsSubmixSlidersContainerDiv" class="columnDirection">
+              <div id="lineInLevelsSubmixSlidersContainerDiv" class="sliderContainerDiv">
                 <div id="lineInLevelsSubmixHeaderDiv" class="rowDirection">
                   <h3>Line In</h3>
                 </div>
@@ -1148,7 +1162,7 @@
                   </div>
                 </div>
               </div>
-              <div id="systemLevelsSubmixSlidersContainerDiv" class="columnDirection">
+              <div id="systemLevelsSubmixSlidersContainerDiv" class="sliderContainerDiv">
                 <div id="systemLevelsSubmixHeaderDiv" class="rowDirection">
                   <h3>System</h3>
                 </div>
@@ -1167,7 +1181,7 @@
                   </div>
                 </div>
               </div>
-              <div id="soundboardLevelsSubmixSlidersContainerDiv" class="columnDirection">
+              <div id="soundboardLevelsSubmixSlidersContainerDiv" class="sliderContainerDiv">
                 <div id="soundboardLevelsSubmixHeaderDiv" class="rowDirection">
                   <h3>Sfx</h3>
                 </div>
@@ -1451,7 +1465,7 @@
         <!--color settings-->
         <div id="colorPresetsDiv" class="columnDirectionBorder backgroundLight borderColor">
           <h2>Color Presets</h2>
-          <select id="colorPresetsSelector" class="colorSelector backgroundDark accentColor borderColor" onchange="updateColors(this.value)">
+          <select id="colorPresetsSelector" class="colorSelector backgroundDark accentColor borderColor" onclick="updateColors(this.value)">
             <!--color presets including, royal, vaporwave (light), synthwave (dark), scenecore, jazz cup, groovy 70's, gothic, memphis style, espresso, hardware store (orange), hardware store (blue), fast food, barn, joker, forest, starry night, freedom, irish, colcano, christmas, halloween-->
             <option value="Royal" checked>Royal</option>
             <option value="Vaporwave">Vaporwave</option>
@@ -1481,19 +1495,19 @@
           <table>
             <tr>
               <th><h3>Background Color</h3></th>
-              <td class="invisTable"><input type="color" id="backgroundColorSelector" class="colorSelector"></td>
+              <td class="invisTable"><input type="color" id="backgroundColorSelector" onchange="document.documentElement.style.setProperty('--background-dark', this.value);" class="colorSelector"></td>
             </tr>
             <tr>
               <th><h3>Midground Color</h3></th>
-              <td class="invisTable"><input type="color" id="midgroundColorSelector" class="colorSelector"></td>
+              <td class="invisTable"><input type="color" id="midgroundColorSelector" onchange="document.documentElement.style.setProperty('--background-light', this.value);" class="colorSelector"></td>
             </tr>
             <tr>
               <th><h3>Foreground Color</h3></th>
-              <td class="invisTable"><input type="color" id="foregroundColorSelector" class="colorSelector"></td>
+              <td class="invisTable"><input type="color" id="foregroundColorSelector" onchange="document.documentElement.style.setProperty('--accent-color', this.value);" class="colorSelector"></td>
             </tr>
             <tr>
               <th><h3>Border Color</h3></th>
-              <td class="invisTable"><input type="color" id="borderColorSelector" class="colorSelector"></td>
+              <td class="invisTable"><input type="color" id="borderColorSelector" onchange="document.documentElement.style.setProperty('--border-color', this.value);" class="colorSelector"></td>
             </tr>
           </table>
         </div>
@@ -1515,11 +1529,11 @@
           <table>
             <tr>
               <th><h3>Default Color</h3></th>
-              <td class="invisTable"><input type="color" id="muteDefaultColorSelector" class="colorSelector"></td>
+              <td class="invisTable"><input type="color" id="muteDefaultColorSelector" onchange="document.documentElement.style.setProperty('--unchecked', this.value);" class="colorSelector"></td>
             </tr>
             <tr>
               <th><h3>Mute Color</h3></th>
-              <td class="invisTable"><input type="color" id="muteMutedColorSelector" class="colorSelector"></td>
+              <td class="invisTable"><input type="color" id="muteMutedColorSelector" onchange="document.documentElement.style.setProperty('--mute', this.value);" class="colorSelector"></td>
             </tr>
           </table>
         </div>
@@ -1534,11 +1548,11 @@
           <table>
             <tr>
               <th><h3>Number Of Sliders</h3></th>
-              <th><input id="sliderCountElement" type="number" class="SettingsElement" placeholder="6" min="0" max="10"></th>
+              <th><input id="sliderCountElement" type="number" class="SettingsElement" placeholder="10" min="0" max="10" onchange="hideExtraElements(this.value, 'visibleSlider', 'sliderTab')"></th>
             </tr>
             <tr>
               <th><h3>Number Of Keyboards</h3></th>
-              <th><input id="keyboardCountElement" type="number" class="SettingsElement" placeholder="4" min="0" max="4"></th>
+              <th><input id="keyboardCountElement" type="number" class="SettingsElement" placeholder="4" min="0" max="4" onchange="hideExtraElements(this.value, 'kbNumSelector', 'keyboardTab')"></th>
             </tr>
             <tr>
               <th><h3>OLED Type</h3></th>
@@ -1567,6 +1581,10 @@
 <script>
   function onLoad () {
     document.getElementById('micConfig').checked = true;
+    var numSliders = document.getElementById('sliderCountElement').value;
+    var numKeyboards = document.getElementById('keyboardCountElement').value;
+    hideExtraElements(numSliders, 'visibleSlider', 'sliderTab');
+    hideExtraElements(numSliders, 'kbNumSelector', 'keyboardTab');
   }
 
   window.onload = onLoad;
@@ -1575,6 +1593,7 @@
     console.log('SliderId: ' + sliderId + ' SliderValue: ' + sliderValue);
     document.getElementById(sliderId).innerText = sliderValue;
   }
+
   function updateColors(colorPreset) {
     console.log('Color Preset: ' + colorPreset);
     var darkColor, lightColor, accentColor, borderColor, muteColor, uncheckedColor, routerColor;
@@ -1585,7 +1604,7 @@
         accentColor = '#ffd700';
         borderColor = '#ffd700';
         muteColor = 'red';
-        uncheckedColor = '#fff';
+        uncheckedColor = '#FFFF';
         routerColor = '#90ee90';
         break;
       case 'Vaporwave':
@@ -1778,6 +1797,12 @@
         routerColor = '#90ee90';
         break;
     }
+    document.getElementById('backgroundColorSelector').value = darkColor;
+    document.getElementById('midgroundColorSelector').value = lightColor;
+    document.getElementById('foregroundColorSelector').value = accentColor;
+    document.getElementById('borderColorSelector').value = borderColor;
+    document.getElementById('muteDefaultColorSelector').value = uncheckedColor;
+    document.getElementById('muteMutedColorSelector').value = muteColor;
     document.documentElement.style.setProperty('--background-dark', darkColor);
     document.documentElement.style.setProperty('--background-light', lightColor);
     document.documentElement.style.setProperty('--accent-color', accentColor);
@@ -1798,6 +1823,32 @@
       if (targetDiv) {
         targetDiv.style.display = 'flex';
       }
+  }
+
+  function hideExtraElements(numElements, className, tabName) {
+    if(className === 'kbNumSelector') {
+      // sets keyboard tab selector to one to prevent it from 
+      // being set to a keyboard which can no longer be accessed
+      document.getElementById('KeyboardOne').checked = true;
+      populateKbDiv('Keyboard One');
+    }
+    if(numElements == 0) {
+      document.querySelectorAll(`.${tabName}`).forEach(tab => {
+        tab.style.display = 'none';
+      });
+    } else {
+      document.querySelectorAll(`.${tabName}`).forEach(tab => {
+        tab.style.display = 'flex';
+      });
+    }
+    const elements = document.querySelectorAll(`.${className}`);
+    elements.forEach((element, index) => {
+      if (index >= numElements) {
+        element.style.display = 'none';
+      } else {
+        element.style.display = 'flex';
+      }
+    });
   }
 
   function saveChanges() {
@@ -1824,35 +1875,6 @@
 
 function clearKeyCombination() {
   document.getElementById('keyCombinationTextarea').value = '';
-}
-
-function regenerateFormContent(ConfigButtonId) {
-  const formContentDiv = document.getElementById('form-content');
-  formContentDiv.innerHTML = '';
-  const mode = document.querySelector('input[name="ButtonMode"]:checked').value;
-  let formContent;
-
-  formContentDiv.innerHTML = formContent;
-
-  // Add event listener after HTML has been updated
-  const clearButton = document.getElementById('clear');
-  const keyCombinationTextarea = document.getElementById('key-combination');
-  if (clearButton) {
-    clearButton.addEventListener('click', function(e) {
-      keyCombinationTextarea.value = ''; // clear the textarea
-    });
-    keyCombinationTextarea.readOnly = true; // make the textarea read-only
-  }
-  if (mode === 'Soundboard') {
-    document.getElementById('sound').addEventListener('change', function(e) {
-      const file = this.files[0];
-      const maxSize = 1024 * 1024 * 3; // 3MB max of 428 keys so absolute maximum of 1.284GB of sound effects
-      if (file.size > maxSize){
-        alert("File is too large ! Please select a file less than 3MB in size.");
-        this.value = "";
-      }
-    });
-  }
 }
 
 let keys = new Set();
@@ -1884,37 +1906,6 @@ document.addEventListener('keyup', function(e) {
     }
   }
 });
-
-function selectKeyboard(keyboardId) {
-    // Reset all buttons
-    const buttons = document.querySelectorAll('.horiTab');
-    buttons.forEach(button => {
-      button.classList.remove('active');
-    });
-
-    // Set the clicked button as active
-    const selectedButton = document.getElementById(keyboardId);
-    selectedButton.classList.add('active');
-
-    // Change the content of KeyboardContainerDiv based on the selected button
-    const container = document.getElementById('KeyboardContainerDiv');
-    switch (keyboardId) {
-      case 'KeyboardOne':
-        container.innerHTML = '<p>Configuration for Keyboard One</p>';
-        break;
-      case 'KeyboardTwo':
-        container.innerHTML = '<p>Configuration for Keyboard Two</p>';
-        break;
-      case 'KeyboardThree':
-        container.innerHTML = '<p>Configuration for Keyboard Three</p>';
-        break;
-      case 'KeyboardFour':
-        container.innerHTML = '<p>Configuration for Keyboard Four</p>';
-        break;
-      default:
-        container.innerHTML = '';
-    }
-}
 </script>
 </body>
 </html>
