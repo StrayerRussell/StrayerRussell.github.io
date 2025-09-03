@@ -3,6 +3,15 @@
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <style>
+  :root {
+    --background-dark: #400080;
+    --background-light: #5e00b3;
+    --accent-color: #ffd700;
+    --border-color: #ffd700;
+    --unchecked: white;
+    --mute: red;
+    --router: lightgreen;
+  }
   body {
     font-family: system-ui;
     margin: 0;
@@ -1584,7 +1593,7 @@
     console.log('SliderId: ' + sliderId + ' SliderValue: ' + sliderValue);
     document.getElementById(sliderId).innerText = sliderValue;
   }
-
+  
   function updateColors(colorPreset) {
     console.log('Color Preset: ' + colorPreset);
     var darkColor, lightColor, accentColor, borderColor, muteColor, uncheckedColor, routerColor;
@@ -1900,5 +1909,6 @@ document.addEventListener('keyup', function(e) {
 </script>
 </body>
 </html>
+
 
 
