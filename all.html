@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css" type="text/css">
+  </head>
+  <body>
+    <table class="fullheight" cellpadding="0" cellspacing="0" width="100%">
+        <!--Header-->
+        <tr>
+            <td class="corner"></td>
+            <td class="title"><h1>All Projects</h1></td>
+        </tr>
+        <!--Body-->
+        <tr class="fullheight">
+            <!--Nav Bar-->
+            <td class="navCont">
+                <div id="navBar">
+                    <ul class="nav">
+                        <li><a href="index.html">Home</a></li>
+                        <li>
+                            <p class="current">Projects</p>
+                            <ul>
+                                <li><a href="all.html">All</a></li>
+                                <li><a href="software.html">Software</a></li>
+                                <li><a href="hardware.html">Hardware</a></li>
+                            </ul>
+                        </li>
+                        <li><a href="resume.pdf">Resume</a></li>
+                        <li><a href="contact.html">Contact</a></li>
+                    </ul>
+                    <div id="soc">
+                        <center>
+                            <div>
+                                <a class="icon" href="https://github.com/StrayerRussell"><img class="icon" src="./images/githubIcon.svg" title="GitHub"></a>
+                                <a class="icon" href="https://www.linkedin.com/in/david-russell-0554a01b7"><img class="icon" src="./images/linkedinIcon.svg" title="LinkedIn"></a>
+                                <a class="icon" href="mailto:david.strayer.russell@gmail.com"><img class="icon" src="./images/emailIcon.svg" title="E-Mail"></a>
+                            </div>
+                        </center>
+                    </div>
+                    <div id="qr">
+                        <p>Direct Page Link</p>
+                        <center><div id="qrcode"></div></center>
+                    </div>
+                    <ul class="nav" id="color">
+                        <p>Terminal Accent Color</p>
+                        <li class="theme" id="amber" onclick="setTheme('#FFB000');">Amber</li>
+                        <li class="theme" id="green" onclick="setTheme('#33FF33')">Green</li>
+                        <li class="theme" id="white" onclick="setTheme('#FFFFFF')">White</li>
+                        <li class="theme" id="purple" onclick="setTheme('#9500F2')">Purple</li>
+                    </ul>
+                </div>
+            </td>
+            <!--Main Body Section-->
+            <td class="main fullheight" style="vertical-align: top;" width="100%">
+                <div>
+                    <table class="contentTable">
+                        <tr>
+                            <td class="infoCard">
+                                <a href="redog.html">
+                                    <h3>Xeroc PARC Reading Eye Dog</h3>
+                                    <img src="./images/redogArticleArt.png" alt="Reading Eye Dog">
+                                    <p>A mueseum showpiece built in 1999 restored by me in 2024 with scratch written software and all original hardware.</p>
+                                    <h4>VCF-SW 2025 Best Restoration Award Winner!!!</h4>
+                                </a>
+                            </td>
+                            <td class="infoCard">
+                                <a href="coldline.html">
+                                    <h3>Coldline</h3>
+                                    <img src="./images/coldlineArticleArt.png" alt="Coldline img">
+                                    <p>Port of indie game Coldline, an auditory escape room game based upon navigating a phone tree, from its native Unity game engine to an Interactive Voice application within Cisco IOS</p>
+                                </a>
+                            </td>
+                            <td class="infoCard">
+                                <a href="cvbs.html">
+                                    <h3>ESP32-S3 Composite Video</h3>
+                                    <img src="./images/cvbsArticleArt.png" alt="Esp32-s3 composite video">
+                                    <p>Modification of ESP32-S3 LCD peripheral to generate high resolution NTSC video</p>
+                                </a>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="infoCard">
+                                <a href="webgl2.html">
+                                    <h3>WebGL2 Realtime Video Dithering</h3>
+                                    <img src="./images/webgl2ArticleArt.PNG" alt="WebGL2 Dithering">
+                                    <p>Using WebGL2 to apply realtime dithering effects to a video stream element for low bitrate video streaming</p>
+                                </a>
+                            </td class="infoCard">
+                            <td class="infoCard">
+                                <a href="webgpu.html">
+                                    <h3>WebGPU Realtime Video Dithering</h3>
+                                    <img src="./images/webgpuArticleArt.PNG" alt="WebGPU Dithering">
+                                    <p>Using WebGPU to apply realtime dithering effects to a video stream element for low bitrate video streaming with compression and extra processing on the GPU</p>
+                                </a>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </td>
+        </tr>
+        <!--Footer-->
+        <tr><td class="footer" colspan="2" height="48"><h5>Strayer Russell 2025</h5></td></tr>
+    </table>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <script src="script.js"></script>
+    <script>document.onload = onLoad();</script>
+  </body>
+</html>

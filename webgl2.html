@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css" type="text/css">
+  </head>
+  <body>
+    <table class="fullheight" cellpadding="0" cellspacing="0" width="100%">
+        <!--Header-->
+        <tr>
+            <td class="corner"></td>
+            <td class="title"><h1>WebGL2 Realtime Video Dithering</h1></td>
+        </tr>
+        <!--Body-->
+        <tr class="fullheight">
+            <!--Nav Bar-->
+            <td class="navCont">
+                <div id="navBar">
+                    <ul class="nav">
+                        <li class="current"><a href="index.html">Home</a></li>
+                        <li>
+                            <p>Projects</p>
+                            <ul>
+                                <li><a href="all.html">All</a></li>
+                                <li><a href="software.html">Software</a></li>
+                                <li><a href="hardware.html">Hardware</a></li>
+                            </ul>
+                        </li>
+                        <li><a href="resume.pdf">Resume</a></li>
+                        <li><a href="contact.html">Contact</a></li>
+                    </ul>
+                    <div id="soc">
+                        <center>
+                            <div>
+                                <a class="icon" href="https://github.com/StrayerRussell"><img class="icon" src="./images/githubIcon.svg" title="GitHub"></a>
+                                <a class="icon" href="https://www.linkedin.com/in/david-russell-0554a01b7"><img class="icon" src="./images/linkedinIcon.svg" title="LinkedIn"></a>
+                                <a class="icon" href="mailto:david.strayer.russell@gmail.com"><img class="icon" src="./images/emailIcon.svg" title="E-Mail"></a>
+                            </div>
+                        </center>
+                    </div>
+                    <div id="qr">
+                        <p>Direct Page Link</p>
+                        <center><div id="qrcode"></div></center>
+                    </div>
+                    <ul class="nav" id="color">
+                        <p>Terminal Accent Color</p>
+                        <li class="theme" id="amber" onclick="setTheme('#FFB000');">Amber</li>
+                        <li class="theme" id="green" onclick="setTheme('#33FF33')">Green</li>
+                        <li class="theme" id="white" onclick="setTheme('#FFFFFF')">White</li>
+                        <li class="theme" id="purple" onclick="setTheme('#9500F2')">Purple</li>
+                    </ul>
+                </div>
+            </td>
+            <!--Main Body Section-->
+            <td class="main fullheight" style="vertical-align: top;" width="100%">
+                <div>
+			<h2><a href="WebGL2PortfolioDemonstration.html">Live Demo</a></h2>
+			<span class="image fit"><img src="./images/webgl2ArticleArt.png" alt="Image showing the Webgl 2 real time dithering demo including a canvas, and various UI elements such as buttons" /></span>
+			<p>This is a demo application I created which captures the users screen with the getDisplayMedia() API and utilizes WebGl 2 to apply processing such as edge detection, luminance threshholding, and saturation 
+				masking to this video stream in order to reduce the full color 24 bit per pixel video to one bit per pixel monochrome dithered image.
+			</p>
+			<p>This project was my first foray into the world of web based graphics API's and was primarily intended to farmiliarize myself with the API's and resources so that I would know the keywords and locations
+				to find help in the future. This project is the precursor to my <a href="webgpu.html">WebGPU Realtime Dithering Demo</a> project which I created after becoming frustrated with the 
+				limitations of WebGL2. I decided to continue with and finalize this project however as WebGL 2 is still incredibly relevant and more importantly widley supported by both browsers and the community.
+				I much prefer the more modern and flexible WebGPU API but due to it's experimental status it is not a safe assumption that it will "Just Work" on all devices and browsers.
+			</p>
+			<p>This demo leverages the vertex and fragment shader stages of the webgpu render pipeline. The vertex shader is used to render a space for the video texture to be projected upon and the fragment shader is used to 
+				apply the edge detection, luminance threshholding, and saturation masking to the video texture before crushing the color depth from the roughly 16 million colors of a 24 bit per pixel image to 2 colors of a 
+				bitonal image. The primary differentiator between this project and the WebGPU project is the lack of a compute shader stage in the pipeline. This is due to the lack of support for compute shaders in WebGL2
+				and nessecitates the reading back of the raw texture data to the CPU for further processing. This is a major bottleneck in the preformace of this project as WebGL2 is only garunteed to support the RGBA8 color
+				format requiring a full 32 bits to be read over the bus for each pixel in the image despite each pixel only needing 1 bit of information. The lack of support for non grapics computation also requires the 32 bit
+				to 1 bit compression to be done in Javascript on the CPU which is a much slower and less efficent process than the parallel processing of the GPU.
+			</p>
+			<p>Despite the shortcomings I feel that WebGL 2 has I still consider this project a success. I enjoyed developing with WebGPU much more but, deploying and testing my WebGPU application on other computers and systems was often a finnicky
+				and frustrating process, often requiring enabling experimental support or in some cases downloading an entirley seperate browser. To the credit of WebGL 2 it worked nearly effortlessly on all devices and browsers that I tested it on 
+				and I am confident that it will continue to do so for the forseeable future. I am also happy with the results of the project as it allowed me to experiment with different types of data processing and optimizations and I am proud of 
+				the final product. Especially because I now know where my prefrences lie and which tools I have at my disposal for future projects so that I may select the "right tool for the job." for applications which demand high reliability and 
+				portability over efficency and flexibility.
+			</p>
+                </div>
+            </td>
+        </tr>
+        <!--Footer-->
+        <tr><td class="footer" colspan="2" height="48"><h5>Strayer Russell 2025</h5></td></tr>
+    </table>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <script src="script.js"></script>
+    <script>document.onload = onLoad();</script>
+  </body>
+</html>
