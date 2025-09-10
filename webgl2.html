@@ -54,30 +54,57 @@
             </td>
             <!--Main Body Section-->
             <td class="main fullheight" style="vertical-align: top;" width="100%">
-                <div>
-			<h2><a href="WebGL2PortfolioDemonstration.html">Live Demo</a></h2>
-			<span class="image fit"><img src="./images/webgl2ArticleArt.png" alt="Image showing the Webgl 2 real time dithering demo including a canvas, and various UI elements such as buttons" /></span>
-			<p>This is a demo application I created which captures the users screen with the getDisplayMedia() API and utilizes WebGl 2 to apply processing such as edge detection, luminance threshholding, and saturation 
-				masking to this video stream in order to reduce the full color 24 bit per pixel video to one bit per pixel monochrome dithered image.
-			</p>
-			<p>This project was my first foray into the world of web based graphics API's and was primarily intended to farmiliarize myself with the API's and resources so that I would know the keywords and locations
-				to find help in the future. This project is the precursor to my <a href="webgpu.html">WebGPU Realtime Dithering Demo</a> project which I created after becoming frustrated with the 
-				limitations of WebGL2. I decided to continue with and finalize this project however as WebGL 2 is still incredibly relevant and more importantly widley supported by both browsers and the community.
-				I much prefer the more modern and flexible WebGPU API but due to it's experimental status it is not a safe assumption that it will "Just Work" on all devices and browsers.
-			</p>
-			<p>This demo leverages the vertex and fragment shader stages of the webgpu render pipeline. The vertex shader is used to render a space for the video texture to be projected upon and the fragment shader is used to 
-				apply the edge detection, luminance threshholding, and saturation masking to the video texture before crushing the color depth from the roughly 16 million colors of a 24 bit per pixel image to 2 colors of a 
-				bitonal image. The primary differentiator between this project and the WebGPU project is the lack of a compute shader stage in the pipeline. This is due to the lack of support for compute shaders in WebGL2
-				and nessecitates the reading back of the raw texture data to the CPU for further processing. This is a major bottleneck in the preformace of this project as WebGL2 is only garunteed to support the RGBA8 color
-				format requiring a full 32 bits to be read over the bus for each pixel in the image despite each pixel only needing 1 bit of information. The lack of support for non grapics computation also requires the 32 bit
-				to 1 bit compression to be done in Javascript on the CPU which is a much slower and less efficent process than the parallel processing of the GPU.
-			</p>
-			<p>Despite the shortcomings I feel that WebGL 2 has I still consider this project a success. I enjoyed developing with WebGPU much more but, deploying and testing my WebGPU application on other computers and systems was often a finnicky
-				and frustrating process, often requiring enabling experimental support or in some cases downloading an entirley seperate browser. To the credit of WebGL 2 it worked nearly effortlessly on all devices and browsers that I tested it on 
-				and I am confident that it will continue to do so for the forseeable future. I am also happy with the results of the project as it allowed me to experiment with different types of data processing and optimizations and I am proud of 
-				the final product. Especially because I now know where my prefrences lie and which tools I have at my disposal for future projects so that I may select the "right tool for the job." for applications which demand high reliability and 
-				portability over efficency and flexibility.
-			</p>
+                <div class="article">
+                    <h2><a href="WebGL2PortfolioDemonstration.html">Live Demo</a></h2>
+                    <img src="./images/webgl2ArticleArt.png" alt="Image showing the Webgl 2 real time dithering demo including a canvas, and various UI elements such as buttons">
+                    <h3>Overview</h3>
+                    <p>This is a demo application which uses WebGL2, combined with the getDisplayMedia() API, to capture the users screen and apply video processing effects in real time. The intention of these
+                        effects is to convert the 24bit "High Color" image to a 1bit bitonal image while still maintiaining legibility (as much as possible at least).
+                    </p>
+                    <h3>Motivations</h3>
+                    <p> I wanted to do this project for 2 reasons, firstly I think that dithering
+                        looks really cool and the premise of ripping out 95.833% of the data from within an image while still maintaining any legibility at all is fascinating to me, and secondly by massivley reducing
+                        the size of the image data (and as a side effect simplifying it to the point that it becomes trivial to obtain a high compression ratio with very simple algorithims) it should be possible to 
+                        stream "Video" within an incredibly limited bitrate to very computationally constraned devces at a passable framerate and resolution, say for example an
+                        <a href="cvbs.html">ESP32-S3 Tweaked to generate composite video</a>. 
+                    </p>
+                    <h3>Implementation</h3>
+                    <p>
+                        The usage of the WebGL2 shaders is fairly typical with the vertex shader being used to draw the screenshared video stream onto a texture and the fragment shader doing the lions share of the actual processing.
+                        Due to the need to retain as much legibility as possible the processing is a fiar bit mroe complicated than simply applying an ordered dithering filter to the image. THe processing steps of the fragment Shader
+                        are as follows.
+                    </p>
+                    <ol>
+                        <li>
+                            <p>Check saturation of current pixel</p>
+                            <ul>
+                                <li>If saturation is below threshold apply sharpening filter and basic thresholding</li>
+                                <li>If saturation is above threshold proceed to step two</li>
+                            </ul>
+                        </li>
+                        <li>Apply Sobel edge detection algorithim</li>
+                        <li>Determine location in Bayer dithering grid</li>
+                        <li>
+                            <p>Determine if current pixel is an edge</p>
+                            <ul>
+                                <li>If edge value is above threshold do not apply dithering</li>
+                                <li>If edge value is below threshold apply Bayer dithering</li>
+                            </ul>
+                        </li>
+                        <li>
+                            <p>Convert WebGL2 "Normalized Value (0.0 - 1.0) to RGBA8 (0 - 7FFFFFFF)"</p>
+                            <ul>
+                                <li>If normalized value is above 0.5 output 7FFFFFFF</li>
+                                <li>If normalized value is below 0.5 output 0</li>
+                            </ul>
+                        </li>
+                    </ol>
+                    <p>The initial saturation check is to ensure text remains legible by increasing the sharpness of high contrast white/black borders and avoiding dithering.</p>
+                    <p>The edge detection sharpens the edge of objects and allows sillohettes to be much more noticeable, allowing object differentiation and preventing similar objects from blending into one another.</p>
+                    <p>Finally dithering is applied to high saturation non edge areas and the image is output.</p>
+                    <h3>About the RGB8 color format</h3>
+                    <p>It may seem odd that the output of the fragment shader is a RGBA8 texture. If the point of the shader is to compress the image data to one bit per pixel why are we outputing 32 bits per pixel but only using two of the possible values (0 or 77FFFFFFF). This is due to one of the limitations of WebGL2. The WebGL2 specification only requires support of the RGBA8 colorspace. All other colorspaces, such as R8A1 which would be much more fitting for this project are optional and unfortunatley not found in the implementaions employed in any of the common browsers that I have tested. WebGL2 also does not support reading back arbitrary components of a texture such as only reading the green or alpha component of a texture.</p>
+		    <p>This is a signifigant bottleneck as not only does this require reading back 32 times the ammount of data that we actually need, but it also requires the reduction from multiple bits to one bit to be done on the cpu.
                 </div>
             </td>
         </tr>
