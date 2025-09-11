@@ -456,8 +456,6 @@ var desiredWidth = 720;
 var desiredHeight = 480;
 var shareButton = document.getElementById("shareButton");
 var stopShareButton = document.getElementById("stopShareButton");
-var captureAndSendButton = document.getElementById("captureAndSendButton");
-var captureAndSendChangeMaskButton = document.getElementById("captureAndSendChangeMaskButton");
 
 async function startCapture() 
 {
@@ -468,8 +466,6 @@ async function startCapture()
 
     shareButton.style.display = "none";
     stopShareButton.style.display = "block";
-    captureAndSendButton.style.display = "block";
-    captureAndSendChangeMaskButton.style.display = "block";
 }
 
 function stopCapture() 
@@ -484,8 +480,6 @@ function stopCapture()
     video.srcObject = null;
     shareButton.style.display = "block";
     stopShareButton.style.display = "none";
-    captureAndSendButton.style.display = "none";
-    captureAndSendChangeMaskButton.style.display = "none";
 }
 
 async function dumpZlibData(bufferSelect = 0) {

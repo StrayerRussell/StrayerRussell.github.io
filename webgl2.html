@@ -104,7 +104,15 @@
                     <p>Finally dithering is applied to high saturation non edge areas and the image is output.</p>
                     <h3>About the RGB8 color format</h3>
                     <p>It may seem odd that the output of the fragment shader is a RGBA8 texture. If the point of the shader is to compress the image data to one bit per pixel why are we outputing 32 bits per pixel but only using two of the possible values (0 or 77FFFFFFF). This is due to one of the limitations of WebGL2. The WebGL2 specification only requires support of the RGBA8 colorspace. All other colorspaces, such as R8A1 which would be much more fitting for this project are optional and unfortunatley not found in the implementaions employed in any of the common browsers that I have tested. WebGL2 also does not support reading back arbitrary components of a texture such as only reading the green or alpha component of a texture.</p>
-		    <p>This is a signifigant bottleneck as not only does this require reading back 32 times the ammount of data that we actually need, but it also requires the reduction from multiple bits to one bit to be done on the cpu.
+		    <h3>Limitations</h3>
+		    <p>Unfortunatley these limitations basically kill the viability of this project, as any latency experienced when shuffling
+		    this data arround is multipled by a factor of 32. The most notable issue this causes is on systems with a discrete GPU as the
+		    additional latency of reading data across the PCI-E bus scales massivley, to a minimum of 70ms per frame in my tests, usually
+		    100ms or more (720 * 480 test image). </p>
+		    <p>In summary this means that the absolute best preformance which can be expected from this project is sub par at best and is
+		    massivley inconsistent depending on the device on which it is run (Ironically with better equipped systems preforming worse due
+		    to bus latency). I am still glad I undertook this as it allowed me to experiment with the basics of graphics processing before
+		    transitioning to the much more complicated (but much more capable) <a href="webgpu.html">WebGPU</a>.</p>
                 </div>
             </td>
         </tr>

@@ -57,29 +57,68 @@
                 <div class="article">
                     <h2><a href="WebGPUPortfolioDemonstration.html">Live Demo</a></h2>
                     <img src="./images/webgpuArticleArt.png" alt="Image showing the WebGPU real time dithering demo including a canvas, and various UI elements such as buttons">
-                    <p>This is a demo application I created which captures the users screen with the getDisplayMedia() API and utilizes WebGPU to apply processing such as edge detection, luminance threshholding, and saturation 
-                        masking to this video stream in order to reduce the full color 24 bit per pixel video to one bit per pixel monochrome dithered image.
-                    </p>
-                    <p>This project was created mainly as a learning oppurtunity to farmiliarize myself with WebGPU as I had previously implemented <a href="WebGL2DitheringArticle.html">a similar demo</a> by using WebGL 
-                    but was frustrated by it's lack of flexibility, specifically when it came to processing data and transfering information between the CPU and GPU. WebGPU alleviates much of this frustration by allowing lower level
-                    control of the GPU's resources and data processing pipelines, in exchange for a more complex and verbose API. This is a worthy tradeoff in my opinion as it allows for WebGPU to be leveraged for a wide variety of tasks
-                    once the basics are understood, in contrast with the often more limited and graphics specialized WebGL API.
-                    </p>
-                    <p>This demo specifically leverages both the render and compute shaders of WebGPU making use of the more flexible data handling, multiple render targets, even reusing data from previous render passes. The vertex shader is simply
-                        used to draw a canvas for the video texture to be projected onto, and the fragment shader is used to do the lions share of the computation. applying the edge detection, luminance threshholding, and saturation masking to the 
-                        video texture aiming to extract maximum legibility from the video stream before slashing its color depth to bitonal black and white. The first an RGBA8unorm texture for display upon an HTML5 
-                        canvas element and the second a R8unorm texture for further processing by the compute shader.
-                    </p>
-                    <p>The compute shader utilizes the R8 texture to compress the bitonal image data to truly one bit per pixel by batch processing 32 pixels at a time and fitting them within a single 32 bit integer which is then placed in a 
-                        buffer for read back to the CPU. The compute shader is also used to do some minor bit order reversal to ensure that the image pixels can be extracted in the proper order for display. This compression drastically cuts down on 
-                        the time required to read back data to the CPU as the image data is now 32 times smaller than the origional data and was one of the primary reasons for the porting of this demo to WebGPU from WebGL as many of the alternate 
-                        colorspaces for textures such as R8unorm and RGB5A1unorm are optional implementations that are seldom implemented. This data handling flexibility with buffers even allows for the addition of extra featues such as the comparing
-                        of the output of this render pass with the output of the previous render pass and creating an XOR change map representing only the pixels that have changed between the two frames for more efficent video compression. This is a feature
-                        that would be practically impossible to implement in WebGL due to the lack of data handling flexibility and the immense overhead of reading data back from the CPU and processing the changes in Javascript withought the multithreaded 
-                        advantage of the GPU.
-                    </p>
-                    <p>I am very satisfied with the outcome of this excersize as it allowed me to farmillarize myself with the basics of WebGPU and experiment with different types of data processing and optimisations. There were multiple times while programming This
-                        demo where I spent hours simply having fun tweaking and experimenting with layouts and parameters of the render passes to see what kind of effects I could achieve and if there was any more preformance that I could squeeze out.
+                    <h3>Overview</h3>
+                    <p>This project is mainly a followup to an <a href="webgl2.html">earlier project</a> where I aimed to do the same thing with 
+                    WebGL2 but was frustrated by the limitations of the framework. As such I will not go as in depth here about the overarching
+                    goals of the project, or the video processing pipeline, and mainly focus on the features of WebGPU and how it succeeds where
+                    WebGL2 failed</p>
+                    <h3>WebGL2 Limitations</h3>
+                    <p>The primary limitations (in order of annoyance) of WebGL2 which made it unsuitable for this project are as follows</p>
+                    <ol>
+                        <li>Only garunteed to support RGBA8 (32 bit per pixel) color format</li>
+                        <li>Requires reading back entire pixel (all 32 bits) instead of only components (only reading red bits)</li>
+                        <li>Does not allow arbitrary computation on GPU</li>
+                    </ol>
+                    <p>These limitations are fine for applications where the output of the fragment shader is displayed directly (such as web based
+                    video games) but are very restricting for applications which require further processing of the shader output, as they
+                    effectivley force the following processing pipeline</p>
+                    <ol>
+                        <li>Read large RGBA8 buffer from GPU to CPU (Very slowly if over PCI-E)</li>
+                        <li>Immediately discard most of that data (leaving you with only the data you actually need)</li>
+                        <li>Slowly process that data on the CPU (Probably in a single thread)</li>
+                    </ol>
+                    <h3>WebGPU Advantages</h3>
+                    <p>WebGPU on the other hand DOES suppport other colorspaces, reading back user defined buffers, and arbitrary processing on the
+                    GPU which leads to the following (much more efficent) processing pipeline.</p>
+                    <ol>
+                        <li>Route relevant bits of fragment shader output into secondary buffer for compute shader processing</li>
+                        <li>Do whatever paralellized processing needs to be done on the relevant data and route result to output buffer</li>
+                        <li><p>Copy output buffer (containing only nessecary, pre-processed information) to main memory for further use</p>
+                            <ul><li>(Single threaded processing, transmission, writing to file... etc)</li></ul>
+                        </li>
+                    </ol>
+                    <p>This pipeline allows a much more reasonable division of processing where the highly paralellized "Same Algorithim,
+                    Similar Data" processing stays confined to the GPU (which is built to do exactly that) and is only passed to the CPU once it
+                    has been processed and stripped down to relevant data, which keeps latency low.</p>
+                    <h3>Applying video effects</h3>
+                    <p>The usage of the vertex and fragment shaders are basically the same here as they are in the WgbGL2 project. (the content of the
+                    fragment shader has been tweaked but the steps are the same) The main difference being that the fragment shader outputs to
+                    two different buffers, the display buffer (of type RGBA8) which is akin to the WebGL2 output buffer, and the secondary buffer
+                    (of type R8) which is used for the further compute stage. The secondary buffer is set to the R8 color type as only one
+                    bit per pixel is required for the compute shader but working with values smaller than one byte is a massive pain so this is a
+                    reasonable tradeoff.<br><br>It is worth noting that even without use of a compute shader the support for the R8 color format alone has
+                    made this application 4 times more efficent (8 Bpp vs 32 Bpp)</p>
+                    <h3>The Compute Shader</h3>
+                    <p>This is where the massive efficency gains are made!!! The compute shader in this applicaiton is very simple, extracting the MSB
+                    from some number of bytes in the input buffer, and packing them into a single value. (32 bytes into a single 32 bit word in this
+                    case). <br>This reduces the data transfered per frame from over a Megabyte (1.382Mb) to less than 50 Kilobytes!!! (43.2Kb). 
+                    This takes the total bus transmission time from 70-100Ms (WebGL2 720*480 Discrete GPU) to less than 3Ms 
+                    (WebGPU 720*480 Discrete GPU). We also get an efficency boost from not having to do the bit packing on the CPU but
+                    that pales in comparison to the bus speed improvement.</p>
+                    <h3>What's The Catch</h3>
+                    <p>As we have seen above WebGPU is much more flexible than WebGL2 so why is it not more widespread? <br> Unfortunatley WebGPU is still
+                    a relativley new framework. The first draft was only released in 2021, a full decade later than WebGL2 which was released in 2011.
+                    As such support for WebGPU is still in the experimental phaze. Firefox added default support for WebGPU (at least on windows) earlier this
+                    year (verison 141) but there are still many "helper" features which are yet to be implemented. The main missing feature which hampers This
+                    project is the ability to cast a frame from a video element to a texture via copyExternalImageToTexture()</p>
+                    <h3>Conclusion</h3>
+                    <p>I am very glad I undertook this project, it is only a matter of time until WebGPU recieves full support in Linux and MacOS and once 
+			that occurs I see no downsides (at least for my usecases). WebGL2 is sufficient if all you want to do is graphics and the output 
+			from your fragment shader is piped directly to the display with no further processing, but the additional flexibility of multiple
+			color formats and arbitrary computation on the GPU, while they make WebGPU marginally more complicated, also make it much more 
+			flexible, adaptable, and less frustrating. My experience with WebGL2 felt like I was constaltly having to accomodate and confine
+			the scope of my project to adhere to some needless artificial limitation, whereas WebGPU allowed me whatever flexibility I needed
+			so long as I was willing to work for it. 
                     </p>
                 </div>
             </td>
