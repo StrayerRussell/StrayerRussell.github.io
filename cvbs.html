@@ -58,8 +58,27 @@
                     <a href="https://github.com/StrayerRussell/ESP32-S3-Analog-Video-Library.git">Github Repo Link</a>
                     <img src="./images/cvbsArticleArt.png">
                     <h3>Overview</h3>
-                    <p>This is a summary and overview of my experience writing a composite video library for the ESP32-S3</p>
-                    
+                        <p>This is an overview of the analog video library I made for the ESP32-S3. This is heavily based upon the work of <a href="bitluni.com">Bitluni</a> who made the <a href="">ESP32-S3 VGA Library</a>. In short I have reused their custom LCD driver with circular buffers, and page flipping but modified the sync logic to support composite video; as well as adding several image drawing functions which allow much more efficent access when writing to the framebuffer. Currently the library only supports monochrome NTSC video, I am currently working on color and PAL support and plan on backporting VGA support into a unified library, but would like to gain a better understanding of memory access limitations on the ESP32-S3 so that I can optimize the core functionality before adding extraneous features</p>
+                    <h3>Reasons for Creation</h3>
+                        <p>The original ESP32 had a number of composite video libraries <a href="">(one made by Bitluni)</a> which are convinient for connecting the ESP32 to a wide variety of displays, from televisions, to microdisplays, and cheap backup camera screens. The ESP32-S3 underwent signifigant design changes such as the addition of USB device-host functionality, multiple DMA channels and much faster external PSRAM which are very useful for many projects, however the LCD peripheral used for the analog video on the original ESP32 was also redesigned, rendering the original libraries non-functional.</p>
+                    <h3>Initial Implementation and Sync</h3>
+                        <p></p>
+                    <h3>Improved Drawing Functions</h3>
+                    <h3>Image Types</h3>
+                        <p>There are two types of image types that this library provides drawing functions for.</p>
+                        <ol>
+                            <li>
+                                <h4>Monochrome</h4>
+                                <p>8-bit monochrome image. Most normal of the three, primarily intended for use with other image drawing libraries such as <a href="https://github.com/bitbank2/JPEGDEC">JPEGDEC</a> or <a href="https://github.com/bitbank2/PNGdec">PNGdec</a></p>
+                            </li>
+                            <li>
+                                <h4>PBM</h4>
+                                <p>One-bit per pixel bitonal image. Based upon the "Portable Bitmap" filetype, primarily intended for images with high resolution and contrast within a reasonable size. (used with two of my other projects <a href="webgl2.html">Webgl2 Dithering</a> and <a href="webgpu.html">WebGPU Dithering</a>)</p>
+                            </li>
+                        </ol>
+                        <p>These functions speed up drawing to the framebuffer immenseley as they minimize bounds checks and pointer lookup.</p>
+                    <h3>Color</h3>
+                    <p>Color encoding on NTSC requires keeping track of the color carrier and manipulating the phase and amplitude of the sine wave overlaid on the monochrome video signal. This is fairly computationally intense and requires a decent DAC to render. Unfortunatley at this time I have not been able to make a resistor DAC with decent enough linearity to test color generation accuratley.</p>
                 </div>
             </td>
         </tr>
