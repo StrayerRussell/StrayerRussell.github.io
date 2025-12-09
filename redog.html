@@ -55,12 +55,51 @@
             <!--Main Body Section-->
             <td class="main fullheight" style="vertical-align: top;" width="100%">
                 <div class="article">
-                    <img src="./images/redogArticleArt.png" alt="robotc dog chassis on display">
-                    <h3>Overview</h3>
-                    <h3>Backstory</h3>
-                    <h3>Initial Testing and Validation</h3>
-                    <h3>Firewire Cameras</h3>
-                    <h3>Future Improvements</h3>
+                <img src="./images/redogArticleArt.png" alt="robotc dog chassis on display">
+                	<h3>Overview</h3>
+		    	<p>This is a brief overview of the restoration of "Red" the Xerox PARC reading eye dog. A highly bespoke museum exhibit built as a forward
+			looking, interactive, technological showcase in 1999.</p>
+                    	<h3>Backstory and Functional Overview</h3>
+			<p>Red 
+                    	<h3>Initial Testing and Validation</h3>
+			<p>I began my restoration by breaking Red down into his base components and deciding
+			on an order of importance/testing.</p>
+			<ul>
+				<li>Dual Firewire (IIDC) eye cameras<li>
+				<li>Firewire Interface Card<li>
+				<li>Main Computer<li>
+				<li>Control Button<li>
+				<li>Speech Synthesizer<li>
+			</ul>
+			<p>The computer and speech synthesizer were the easiest to do initial validation of a both powered on successfully and performed some sort of
+			"proof of life function" such as the speech synthesizer reading aloud a status message at boot "DECtalk express is running external power on",
+			or the computer successfully making it to a desktop.</p>
+			<p>I decided to start by working on the computer, speech synthsizer, and button as these would avoid the more complicated aspects of Red such as
+			realtime image processing or OCR (optical character recognition) and allow me to get Red to a minimally interactable state (you push the button he says a line)
+			in order to buy me time while I worked on the much more involved image processing. Verifying the function of the speech synthisizer was fairly simple as it is a
+			fairly common model (a DECtalk Express) with the same controll commands used in many other products (the most notable of which being the Moonbase Alpha TTS, and 
+			Stephen Hawking's assisted speaking rig). The button was also fairly simple, the most complicated aspect being having to reverse engineer the speed it was
+			communicating with the computer at, which lead to me balancing my laptop on my knee repeatedly pushing the button while changing the controll speed untill
+			the button output stopped being gibberish and made sense.
+                    	<h3>Firewire Cameras and OCR</h3>
+			<p>I am lumping the Camera interfacing and OCR under one section as computer based OCR has been a solved problem for a long time now. The desire for a computer to be
+			able to extract the text from an image is a very common one and there are only so many ways to do it, so once I actually got the cameras working properly (a very long
+			process as you will soon see) the OCR was an absolute cakewalk. The biggest limitation is that with Red still running on his original comptuer from 1999 the image processing
+			takes a while, about 57 seconds is the longest I have timed, but this is also true to the original exhibit so I have elected to keep it authentic.</p>
+                    	<h3>Future Improvements</h3>
+		    	<p>As of now RED has been restored to a functional state. The button, cameras, and 
+		    	speech synthesis all work. I would however like to make several improvements to the 
+		    	overall system to make it more viable as an unmanned showpiece. 
+		    	These improvements are summarized in the following list.</p>
+			<ul>
+				<li>"Attract Mode"</li>
+				<li>Ansible Playbook for Setup</li>
+		    	</ul>
+			<p>A minimal system image loaded from a flash disk improves the responsiveness of the
+			system and makes Red less succeptable to issues relating to bumps, jolts, and powerloss
+			Finally an Ansible-Playbook means that even if misfortune befalls Red that
+			an alternative system image can be setup and configured rapidly allowing Red to return
+			to display with minimal delay.</p>
                 </div>
             </td>
         </tr>
